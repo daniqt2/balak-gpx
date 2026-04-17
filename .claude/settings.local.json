@@ -17,7 +17,10 @@
       "Bash(node *)",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'Initial commit: BALAK GPX Editor *)"
+      "Bash(git commit -m 'Initial commit: BALAK GPX Editor *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(git push *)"
     ]
   }
 }
