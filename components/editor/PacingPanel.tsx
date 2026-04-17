@@ -30,6 +30,7 @@ interface PacingPanelProps {
   onDelete: (id: string) => void
   onExport: () => void
   onExportStrip: () => void
+  onExportCue: () => void
 }
 
 export default function PacingPanel({
@@ -41,6 +42,7 @@ export default function PacingPanel({
   onDelete,
   onExport,
   onExportStrip,
+  onExportCue,
 }: PacingPanelProps) {
   const { t } = useT()
   const [kmStart, setKmStart] = useState(zones[0] ? String(zones[zones.length - 1].kmEnd) : '')
@@ -264,6 +266,21 @@ export default function PacingPanel({
             }}
           >
             {t('pacing.export_strip')}
+          </button>
+          <button
+            onClick={onExportCue}
+            style={{
+              background: 'var(--surface2)',
+              border: '1px solid var(--border)',
+              color: '#fff',
+              borderRadius: 4,
+              padding: '7px',
+              fontWeight: 700,
+              fontSize: 11,
+              cursor: 'pointer',
+            }}
+          >
+            {t('pacing.export_cue')}
           </button>
         </div>
       )}

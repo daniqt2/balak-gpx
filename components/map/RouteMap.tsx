@@ -184,7 +184,7 @@ export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint
       return
     }
 
-    if (map.getLayer('route-line')) map.setPaintProperty('route-line', 'line-opacity', 0.15)
+    if (map.getLayer('route-line')) map.setPaintProperty('route-line', 'line-opacity', 0.9)
 
     const newIds: string[] = []
     pacingZones.forEach((zone) => {

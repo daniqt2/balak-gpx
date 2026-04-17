@@ -14,6 +14,7 @@ import { downloadFile } from '@/lib/utils/downloadFile'
 import { generateId } from '@/lib/utils/ids'
 import { exportPacingImage } from '@/lib/export/exportPacingImage'
 import { exportPacingStripImage } from '@/lib/export/exportPacingStripImage'
+import { exportPacingCueImage } from '@/lib/export/exportPacingCueImage'
 import Toolbar from '@/components/editor/Toolbar'
 import PointsSidebar from '@/components/editor/PointsSidebar'
 import ElevationStrip from '@/components/editor/ElevationStrip'
@@ -149,6 +150,15 @@ export default function EditorPage() {
     )
   }, [state.route, state.markers, totalKm, pacingZones, state.fileName])
 
+  const handleExportPacingCue = useCallback(async () => {
+    await exportPacingCueImage(
+      state.fileName ?? 'ruta',
+      totalKm,
+      pacingZones,
+      state.markers
+    )
+  }, [state.fileName, totalKm, pacingZones, state.markers])
+
   if (isMobile) {
     return (
       <MobileEditor
@@ -170,6 +180,7 @@ export default function EditorPage() {
         onDeleteZone={(id) => setPacingZones((prev) => prev.filter((z) => z.id !== id))}
         onExportPacing={handleExportPacing}
         onExportPacingStrip={handleExportPacingStrip}
+        onExportPacingCue={handleExportPacingCue}
         onAddByKm={handleAddByKm}
       />
     )
@@ -220,6 +231,7 @@ export default function EditorPage() {
           onDeleteZone={(id) => setPacingZones((prev) => prev.filter((z) => z.id !== id))}
           onExportPacing={handleExportPacing}
           onExportPacingStrip={handleExportPacingStrip}
+          onExportPacingCue={handleExportPacingCue}
         />
       </div>
 

@@ -40,6 +40,7 @@
     "add_zone": "+ Add zone",
     "export_image": "↓ Export image",
     "export_strip": "↓ Export print strip",
+    "export_cue": "↓ Export cue sheet",
     "zone_default": "Zone"
   },
   "modal": {

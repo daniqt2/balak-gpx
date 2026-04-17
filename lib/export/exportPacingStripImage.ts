@@ -9,6 +9,23 @@ const TOP_H = 196
 const STRIP_H = 250
 const BOTTOM_H = 88
 const HEIGHT = TOP_H + STRIP_H + BOTTOM_H
+const MARKER_TAG_W = 164
+const MARKER_TAG_H = 26
+const MARKER_ROWS_Y = [72, 104]
+
+function assignMarkerRows(markerXs: number[]) {
+  const rowEnds = new Array(MARKER_ROWS_Y.length).fill(-Infinity)
+  return markerXs.map((x) => {
+    const left = x - MARKER_TAG_W / 2
+    const right = x + MARKER_TAG_W / 2
+    const rowIndex = rowEnds.findIndex((end) => left > end + 12)
+    const resolvedRow = rowIndex === -1
+      ? rowEnds.indexOf(Math.min(...rowEnds))
+      : rowIndex
+    rowEnds[resolvedRow] = right
+    return resolvedRow
+  })
+}
 
 function downloadCanvas(canvas: HTMLCanvasElement, fileName: string) {
   canvas.toBlob((blob) => {
@@ -64,12 +81,9 @@ export async function exportPacingStripImage(
   ctx.fillStyle = '#ffffff'
   ctx.fillRect(0, 0, width, HEIGHT)
 
-  ctx.fillStyle = '#111111'
-  ctx.font = 'bold 42px Arial, sans-serif'
-  ctx.fillText(fileName.toUpperCase(), PAD_X, 58)
   ctx.fillStyle = '#6b7280'
   ctx.font = '22px Arial, sans-serif'
-  ctx.fillText(`${totalKm.toFixed(0)} km`, PAD_X, 92)
+  ctx.fillText(`${totalKm.toFixed(0)} km`, PAD_X, 52)
 
   const tick = tickStep(totalKm)
   ctx.strokeStyle = '#e5e7eb'
@@ -97,13 +111,15 @@ export async function exportPacingStripImage(
     const tagX = (x1 + x2) / 2
     ctx.fillStyle = zone.color
     ctx.beginPath()
-    ctx.roundRect(tagX - 62, 114, 124, 34, 8)
+    ctx.roundRect(tagX - 82, 108, 164, 42, 8)
     ctx.fill()
 
     ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 18px Arial, sans-serif'
+    ctx.font = 'bold 16px Arial, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText(zone.label, tagX, 136)
+    ctx.fillText(zone.label, tagX, 126)
+    ctx.font = '14px Arial, sans-serif'
+    ctx.fillText(`${zone.watts}w`, tagX, 143)
     ctx.textAlign = 'left'
   })
 
@@ -132,14 +148,16 @@ export async function exportPacingStripImage(
   ctx.stroke()
 
   const sortedMarkers = [...markers].sort((a, b) => a.distanceFromStart - b.distanceFromStart)
+  const markerXs = sortedMarkers.map((marker) => xAtKm(marker.distanceFromStart))
+  const markerRows = assignMarkerRows(markerXs)
   sortedMarkers.forEach((marker, index) => {
-    const x = xAtKm(marker.distanceFromStart)
+    const x = markerXs[index]
     const cfg = POINT_CONFIG[marker.type]
-    const row = index % 4
-    const tagY = 18 + row * 32
+    const row = markerRows[index]
+    const tagY = MARKER_ROWS_Y[row]
 
     ctx.beginPath()
-    ctx.moveTo(x, tagY + 26)
+    ctx.moveTo(x, tagY + MARKER_TAG_H)
     ctx.lineTo(x, stripTop + STRIP_H - 6)
     ctx.strokeStyle = cfg.color
     ctx.lineWidth = 2
@@ -153,7 +171,7 @@ export async function exportPacingStripImage(
     ctx.strokeStyle = cfg.color
     ctx.lineWidth = 1.5
     ctx.beginPath()
-    ctx.roundRect(x - 82, tagY, 164, 26, 6)
+    ctx.roundRect(x - MARKER_TAG_W / 2, tagY, MARKER_TAG_W, MARKER_TAG_H, 6)
     ctx.fill()
     ctx.stroke()
 
@@ -173,7 +191,7 @@ export async function exportPacingStripImage(
   ctx.font = '16px Arial, sans-serif'
   ctx.fillText('KM', PAD_X, HEIGHT - 22)
   ctx.textAlign = 'right'
-  ctx.fillText('BALAK GPX EDITOR', width - PAD_X, HEIGHT - 22)
+  ctx.fillText(`BALAK · ${fileName.toUpperCase()}`, width - PAD_X, HEIGHT - 22)
 
   downloadCanvas(canvas, `${fileName}-pacing-strip.png`)
 }
