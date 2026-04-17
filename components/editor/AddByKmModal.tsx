@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { PointType, POINT_CONFIG } from '@/types/points'
+import { useT } from '@/lib/i18n'
 
 interface AddByKmModalProps {
   totalKm: number
@@ -20,6 +21,7 @@ export default function AddByKmModal({
   const [type, setType] = useState<PointType>(activeType)
   const [label, setLabel] = useState('')
 
+  const { t } = useT()
   const cfg = POINT_CONFIG[type]
   const kmNum = parseFloat(km)
   const valid = !isNaN(kmNum) && kmNum >= 0 && kmNum <= totalKm
@@ -62,7 +64,7 @@ export default function AddByKmModal({
           }}
         >
           <span style={{ color: '#fff', fontWeight: 700, fontSize: 13, letterSpacing: 1 }}>
-            AÑADIR PUNTO POR KM
+            {t('modal.title')}
           </span>
           <button
             onClick={onClose}
@@ -80,7 +82,7 @@ export default function AddByKmModal({
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <label style={{ color: 'var(--text-muted)', fontSize: 10, letterSpacing: 1 }}>
-            KILÓMETRO (0 – {totalKm.toFixed(1)})
+            {t('modal.km_label', { max: totalKm.toFixed(1) })}
           </label>
           <input
             autoFocus
@@ -90,7 +92,7 @@ export default function AddByKmModal({
             step={0.1}
             value={km}
             onChange={(e) => setKm(e.target.value)}
-            placeholder={`ej. ${(totalKm / 2).toFixed(0)}`}
+            placeholder={t('modal.km_placeholder', { mid: (totalKm / 2).toFixed(0) })}
             style={{
               background: 'var(--surface2)',
               border: `1px solid ${valid || km === '' ? 'var(--border)' : '#ef4444'}`,
@@ -105,16 +107,16 @@ export default function AddByKmModal({
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <label style={{ color: 'var(--text-muted)', fontSize: 10, letterSpacing: 1 }}>
-            TIPO
+            {t('modal.type_label')}
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-            {(Object.keys(POINT_CONFIG) as PointType[]).map((t) => {
-              const c = POINT_CONFIG[t]
-              const active = t === type
+            {(Object.keys(POINT_CONFIG) as PointType[]).map((pt) => {
+              const c = POINT_CONFIG[pt]
+              const active = pt === type
               return (
                 <button
-                  key={t}
-                  onClick={() => setType(t)}
+                  key={pt}
+                  onClick={() => setType(pt)}
                   style={{
                     background: active ? c.color + '22' : 'var(--surface2)',
                     border: active ? `1px solid ${c.color}` : '1px solid var(--border)',
@@ -128,7 +130,7 @@ export default function AddByKmModal({
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {c.emoji} {c.label}
+                  {c.emoji} {t(`points.${pt}`)}
                 </button>
               )
             })}
@@ -137,7 +139,7 @@ export default function AddByKmModal({
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <label style={{ color: 'var(--text-muted)', fontSize: 10, letterSpacing: 1 }}>
-            NOMBRE (opcional)
+            {t('modal.name_optional')}
           </label>
           <input
             type="text"
@@ -171,7 +173,7 @@ export default function AddByKmModal({
             cursor: valid ? 'pointer' : 'default',
           }}
         >
-          Añadir punto
+          {t('modal.add_button')}
         </button>
       </div>
     </div>

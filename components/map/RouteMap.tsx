@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
+import { useT } from '@/lib/i18n'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import type { Feature, LineString } from 'geojson'
@@ -22,6 +23,7 @@ interface RouteMapProps {
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
 export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint, pacingZones, onMapReady }: RouteMapProps) {
+  const { t } = useT()
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<maplibregl.Marker[]>([])
@@ -236,7 +238,7 @@ export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint
             pointerEvents: 'none',
           }}
         >
-          Sube un archivo GPX para visualizar la ruta
+          {t('map.no_route')}
         </div>
       )}
       {routeGeoJSON && (
@@ -255,7 +257,7 @@ export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint
             pointerEvents: 'none',
           }}
         >
-          Haz clic en la ruta para añadir un punto
+          {t('map.click_hint')}
         </div>
       )}
     </div>

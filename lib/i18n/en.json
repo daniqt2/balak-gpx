@@ -1,0 +1,64 @@
+{
+  "toolbar": {
+    "upload": "↑ Upload GPX",
+    "export": "↓ Export",
+    "garmin": "Garmin",
+    "garmin_title": "Downloads the GPX and opens Garmin Connect to import it",
+    "rename_hint": "Click to rename"
+  },
+  "upload": {
+    "subtitle": "Upload a route, add points and export your GPX",
+    "drag_title": "Drag your GPX file here",
+    "drag_sub": "or click to select",
+    "error_gpx_only": "Only .gpx files are supported",
+    "error_load": "Could not load the file",
+    "error_process": "Error processing the file",
+    "loading": "Loading…",
+    "routes_title": "AVAILABLE ROUTES"
+  },
+  "map": {
+    "no_route": "Upload a GPX file to view the route",
+    "click_hint": "Click on the route to add a point"
+  },
+  "elevation": {
+    "label": "ELEVATION"
+  },
+  "sidebar": {
+    "tab_points": "POINTS",
+    "tab_pacing": "PACING",
+    "no_route": "Upload a GPX file to get started",
+    "click_hint": "Click on the route to add points",
+    "point_type": "POINT TYPE",
+    "add_by_km": "+ Add by km"
+  },
+  "pacing": {
+    "new_zone": "NEW ZONE",
+    "km_start": "START KM",
+    "km_end": "END KM",
+    "watts": "WATTS",
+    "name_optional": "NAME (optional)",
+    "add_zone": "+ Add zone",
+    "export_image": "↓ Export image",
+    "zone_default": "Zone"
+  },
+  "modal": {
+    "title": "ADD POINT BY KM",
+    "km_label": "KILOMETER (0 – {max})",
+    "km_placeholder": "e.g. {mid}",
+    "type_label": "TYPE",
+    "name_optional": "NAME (optional)",
+    "add_button": "Add point"
+  },
+  "point": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "points": {
+    "puerto": "Mountain Pass",
+    "parada": "Stop / Café",
+    "peligro": "Hazard",
+    "inicio_subida": "Climb Start",
+    "avituallamiento": "Feed Zone",
+    "nota": "Note"
+  }
+}

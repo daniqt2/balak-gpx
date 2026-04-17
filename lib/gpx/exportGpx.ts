@@ -1,5 +1,14 @@
 import { RoutePoint } from '@/types/route'
-import { RouteMarker } from '@/types/points'
+import { RouteMarker, POINT_CONFIG } from '@/types/points'
+
+function nearestEle(route: RoutePoint[], lat: number, lon: number): number | null {
+  let best = Infinity, ele: number | null = null
+  for (const p of route) {
+    const d = (p.lat - lat) ** 2 + (p.lon - lon) ** 2
+    if (d < best) { best = d; ele = p.ele ?? null }
+  }
+  return ele
+}
 
 export function exportGpx(
   route: RoutePoint[],
@@ -15,8 +24,12 @@ export function exportGpx(
 
   const wpts = markers
     .map((m) => {
-      return `  <wpt lat="${m.lat.toFixed(7)}" lon="${m.lon.toFixed(7)}">
+      const cfg = POINT_CONFIG[m.type]
+      const ele = nearestEle(route, m.lat, m.lon)
+      const eleTag = ele != null ? `\n    <ele>${ele.toFixed(1)}</ele>` : ''
+      return `  <wpt lat="${m.lat.toFixed(7)}" lon="${m.lon.toFixed(7)}">${eleTag}
     <name>${escapeXml(m.label)}</name>
+    <sym>${cfg.garminSym}</sym>
     <type>${m.type}</type>
     <desc>km ${m.distanceFromStart.toFixed(1)}</desc>
   </wpt>`

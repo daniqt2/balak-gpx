@@ -12,6 +12,7 @@ import { pointAtKm } from '@/lib/geo/pointAtKm'
 import { exportGpx } from '@/lib/gpx/exportGpx'
 import { downloadFile } from '@/lib/utils/downloadFile'
 import { generateId } from '@/lib/utils/ids'
+import { exportPacingImage } from '@/lib/export/exportPacingImage'
 import Toolbar from '@/components/editor/Toolbar'
 import PointsSidebar from '@/components/editor/PointsSidebar'
 import ElevationStrip from '@/components/editor/ElevationStrip'
@@ -24,6 +25,7 @@ const DEFAULT_STATE: EditorState = {
   routeGeoJSON: null,
   markers: [],
   fileName: null,
+  fileRenamed: false,
 }
 
 export default function EditorPage() {
@@ -34,7 +36,6 @@ export default function EditorPage() {
   const [hoverPoint, setHoverPoint] = useState<{ lat: number; lon: number } | null>(null)
   const [pacingZones, setPacingZones] = useState<PacingZone[]>([])
   const [ftp, setFtp] = useState(0)
-  const elevationRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<unknown>(null)
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function EditorPage() {
     try {
       const route = parseGpx(text)
       const routeGeoJSON = routeToGeoJSON(route)
-      setState((prev) => ({ ...prev, route, routeGeoJSON, fileName: name, markers: [] }))
+      setState((prev) => ({ ...prev, route, routeGeoJSON, fileName: name, markers: [], fileRenamed: false }))
       setPacingZones([])
     } catch {
       alert('Error al procesar el archivo GPX')
@@ -101,72 +102,37 @@ export default function EditorPage() {
     [state.routeGeoJSON]
   )
 
-  const handleExport = useCallback(() => {
-    if (!state.route || !state.fileName) return
-    const gpxStr = exportGpx(state.route, state.markers, state.fileName)
-    downloadFile(gpxStr, `${state.fileName}-editado.gpx`, 'application/gpx+xml')
-  }, [state])
-
-  const handleExportPacing = useCallback(async () => {
-    const elevEl = elevationRef.current
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const map = mapInstanceRef.current as any
-    if (!elevEl) return
-
-    const scale = 2
-    const html2canvas = (await import('html2canvas')).default
-
-    // Elevation strip canvas
-    const elevCanvas = await html2canvas(elevEl, { backgroundColor: '#1a1a1a', scale })
-
-    // Map canvas (WebGL — must use map's own canvas)
-    let mapImgData: string | null = null
-    if (map) {
-      try {
-        map.getCanvas().getContext('webgl', { preserveDrawingBuffer: true })
-        mapImgData = map.getCanvas().toDataURL('image/png')
-      } catch { /* map not ready */ }
-    }
-
-    const elevW = elevCanvas.width
-    const elevH = elevCanvas.height
-    const mapH = mapImgData ? elevW * 0.55 : 0
-
-    const out = document.createElement('canvas')
-    out.width = elevW
-    out.height = Math.round(mapH) + elevH
-    const ctx = out.getContext('2d')!
-    ctx.fillStyle = '#111'
-    ctx.fillRect(0, 0, out.width, out.height)
-
-    if (mapImgData) {
-      const img = new Image()
-      await new Promise<void>((res) => {
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, elevW, Math.round(mapH))
-          res()
-        }
-        img.src = mapImgData!
-      })
-    }
-
-    ctx.drawImage(elevCanvas, 0, Math.round(mapH))
-
-    out.toBlob((blob) => {
-      if (!blob) return
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${state.fileName ?? 'pacing'}-zonas.png`
-      a.click()
-      URL.revokeObjectURL(url)
-    })
-  }, [state.fileName])
-
   const totalKm = state.routeGeoJSON ? totalRouteDistance(state.routeGeoJSON) : 0
   const totalGain = state.route
     ? totalElevationGain(state.route.map((p) => p.ele))
     : 0
+
+  const handleExport = useCallback(() => {
+    if (!state.route || !state.fileName) return
+    const gpxStr = exportGpx(state.route, state.markers, state.fileName)
+    const exportName = state.fileRenamed ? state.fileName : `${state.fileName}-editado`
+    downloadFile(gpxStr, `${exportName}.gpx`, 'application/gpx+xml')
+  }, [state])
+
+  const handleSendToGarmin = useCallback(() => {
+    if (!state.route || !state.fileName) return
+    const gpxStr = exportGpx(state.route, state.markers, state.fileName)
+    const exportName = state.fileRenamed ? state.fileName : `${state.fileName}-editado`
+    downloadFile(gpxStr, `${exportName}.gpx`, 'application/gpx+xml')
+    window.open('https://connect.garmin.com/modern/import-data', '_blank')
+  }, [state])
+
+  const handleExportPacing = useCallback(async () => {
+    if (!state.routeGeoJSON || !state.route) return
+    await exportPacingImage(
+      state.routeGeoJSON,
+      pacingZones,
+      state.route,
+      totalKm,
+      ftp,
+      state.fileName ?? 'ruta'
+    )
+  }, [state.routeGeoJSON, state.route, pacingZones, totalKm, ftp, state.fileName])
 
   return (
     <div
@@ -184,6 +150,8 @@ export default function EditorPage() {
         totalGain={totalGain}
         onUpload={handleUpload}
         onExport={handleExport}
+        onRename={(name) => setState((prev) => ({ ...prev, fileName: name, fileRenamed: true }))}
+        onSendToGarmin={handleSendToGarmin}
       />
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
@@ -219,7 +187,7 @@ export default function EditorPage() {
           totalKm={totalKm}
           onHover={(pt) => setHoverPoint(pt ? { lat: pt.lat, lon: pt.lon } : null)}
           pacingZones={pacingZones}
-          exportRef={elevationRef}
+          markers={state.markers}
         />
       )}
 

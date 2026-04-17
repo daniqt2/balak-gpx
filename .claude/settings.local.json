@@ -23,7 +23,12 @@
       "Bash(git push *)",
       "Bash(git commit -m 'fix: add @types/geojson for production build *)",
       "Bash(git commit -m 'fix: update pnpm lockfile *)",
-      "Bash(git commit -m 'feat: export pacing image combines map + elevation strip *)"
+      "Bash(git commit -m 'feat: export pacing image combines map + elevation strip *)",
+      "WebSearch",
+      "WebFetch(domain:support.strava.com)",
+      "WebFetch(domain:communityhub.strava.com)",
+      "Bash(grep -E \"[A-Za-záéíóúñÁÉÍÓÚÑ]{3,}\")",
+      "Bash(grep -v \"^[[:space:]]*$\\\\|className\\\\|import\\\\|style\\\\|\\\\.\\\\.\\\\.\")"
     ]
   }
 }

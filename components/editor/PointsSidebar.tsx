@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { RouteMarker, PointType, POINT_CONFIG } from '@/types/points'
+import { useT } from '@/lib/i18n'
 import { PacingZone } from '@/types/pacing'
 import PointCard from './PointCard'
 import PacingPanel from './PacingPanel'
@@ -39,6 +40,7 @@ export default function PointsSidebar({
   onDeleteZone,
   onExportPacing,
 }: PointsSidebarProps) {
+  const { t } = useT()
   const [tab, setTab] = useState<'puntos' | 'pacing'>('puntos')
   const sorted = [...markers].sort((a, b) => a.distanceFromStart - b.distanceFromStart)
 
@@ -82,8 +84,8 @@ export default function PointsSidebar({
           flexShrink: 0,
         }}
       >
-        {tabBtn('puntos', 'PUNTOS')}
-        {tabBtn('pacing', 'PACING')}
+        {tabBtn('puntos', t('sidebar.tab_points'))}
+        {tabBtn('pacing', t('sidebar.tab_pacing'))}
       </div>
 
       {tab === 'puntos' && (
@@ -91,12 +93,12 @@ export default function PointsSidebar({
           <div style={{ flex: 1, overflowY: 'auto', padding: 8 }}>
             {!hasRoute && (
               <p style={{ color: 'var(--text-muted)', fontSize: 11, textAlign: 'center', marginTop: 24 }}>
-                Sube un archivo GPX para empezar
+                {t('sidebar.no_route')}
               </p>
             )}
             {hasRoute && sorted.length === 0 && (
               <p style={{ color: 'var(--text-muted)', fontSize: 11, textAlign: 'center', marginTop: 24 }}>
-                Haz clic en la ruta para añadir puntos
+                {t('sidebar.click_hint')}
               </p>
             )}
             {sorted.map((m) => (
@@ -106,7 +108,7 @@ export default function PointsSidebar({
 
           <div style={{ padding: '10px 14px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
             <div style={{ color: 'var(--text-muted)', fontSize: 10, marginBottom: 6, letterSpacing: 1 }}>
-              TIPO DE PUNTO
+              {t('sidebar.point_type')}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
               {(Object.keys(POINT_CONFIG) as PointType[]).map((type) => {
@@ -130,7 +132,7 @@ export default function PointsSidebar({
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {cfg.emoji} {cfg.label}
+                    {cfg.emoji} {t(`points.${type}`)}
                   </button>
                 )
               })}
@@ -150,7 +152,7 @@ export default function PointsSidebar({
                   cursor: 'pointer',
                 }}
               >
-                + Añadir por km
+                {t('sidebar.add_by_km')}
               </button>
             )}
           </div>
@@ -161,7 +163,7 @@ export default function PointsSidebar({
         <div style={{ flex: 1, overflowY: 'auto', padding: '10px 14px' }}>
           {!hasRoute ? (
             <p style={{ color: 'var(--text-muted)', fontSize: 11, textAlign: 'center', marginTop: 24 }}>
-              Sube un archivo GPX para empezar
+              {t('sidebar.no_route')}
             </p>
           ) : (
             <PacingPanel

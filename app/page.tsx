@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { parseGpx, routeToGeoJSON } from '@/lib/gpx/parseGpx'
+import { useT } from '@/lib/i18n'
 
 interface GpxEntry {
   file: string
@@ -11,6 +12,7 @@ interface GpxEntry {
 
 export default function UploadPage() {
   const router = useRouter()
+  const { t, lang, setLang } = useT()
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -36,7 +38,7 @@ export default function UploadPage() {
 
   function processFile(file: File) {
     if (!file.name.toLowerCase().endsWith('.gpx')) {
-      setError('Solo se admiten archivos .gpx')
+      setError(t('upload.error_gpx_only'))
       return
     }
     const reader = new FileReader()
@@ -55,11 +57,11 @@ export default function UploadPage() {
     setError(null)
     try {
       const res = await fetch(`/gpx/${entry.file}`)
-      if (!res.ok) throw new Error('No se pudo cargar el archivo')
+      if (!res.ok) throw new Error(t('upload.error_load'))
       const text = await res.text()
       storeAndNavigate(text, entry.name)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al cargar la ruta')
+      setError(err instanceof Error ? err.message : t('upload.error_load'))
       setLoadingRoute(null)
     }
   }
@@ -89,6 +91,26 @@ export default function UploadPage() {
         padding: '40px 24px',
       }}
     >
+      {/* Language toggle */}
+      <div style={{ position: 'fixed', top: 16, right: 20, display: 'flex', alignItems: 'center', gap: 4, zIndex: 10 }}>
+        {(['es', 'en'] as const).map((l, i) => (
+          <span key={l} style={{ display: 'flex', alignItems: 'center' }}>
+            {i > 0 && <span style={{ color: '#333', fontSize: 11, margin: '0 2px' }}>|</span>}
+            <button
+              onClick={() => setLang(l)}
+              style={{
+                background: 'none', border: 'none',
+                color: lang === l ? '#fff' : '#444',
+                fontSize: 11, fontWeight: lang === l ? 700 : 400,
+                cursor: 'pointer', padding: '0 2px', letterSpacing: 0.5,
+              }}
+            >
+              {l.toUpperCase()}
+            </button>
+          </span>
+        ))}
+      </div>
+
       <div style={{ marginBottom: 40, textAlign: 'center' }}>
         <h1
           style={{
@@ -103,7 +125,7 @@ export default function UploadPage() {
           <span style={{ fontWeight: 300, color: '#555' }}>GPX EDITOR</span>
         </h1>
         <p style={{ color: '#666', marginTop: 12, fontSize: 14 }}>
-          Sube una ruta, añade puntos y exporta tu GPX
+          {t('upload.subtitle')}
         </p>
       </div>
 
@@ -127,9 +149,9 @@ export default function UploadPage() {
       >
         <div style={{ fontSize: 36, marginBottom: 12 }}>↑</div>
         <div style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 6 }}>
-          Arrastra tu archivo GPX aquí
+          {t('upload.drag_title')}
         </div>
-        <div style={{ color: '#666', fontSize: 13 }}>o haz clic para seleccionar</div>
+        <div style={{ color: '#666', fontSize: 13 }}>{t('upload.drag_sub')}</div>
       </div>
 
       <input
@@ -156,6 +178,49 @@ export default function UploadPage() {
         </div>
       )}
 
+      {/* Footer */}
+      <footer
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 16,
+          padding: '14px 24px',
+          background: 'var(--bg)',
+          borderTop: '1px solid var(--border)',
+          pointerEvents: 'none',
+        }}
+      >
+        {[
+          { label: 'balakride.com', href: 'https://www.balakride.com/' },
+          { label: '@balak.ride', href: 'https://instagram.com/balak.ride' },
+          { label: 'balak.ride@gmail.com', href: 'mailto:balak.ride@gmail.com' },
+        ].map(({ label, href }) => (
+          <a
+            key={href}
+            href={href}
+            target={href.startsWith('mailto') ? undefined : '_blank'}
+            rel="noopener noreferrer"
+            style={{
+              color: '#666',
+              fontSize: 11,
+              textDecoration: 'none',
+              letterSpacing: 0.5,
+              pointerEvents: 'auto',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#aaa')}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#666')}
+          >
+            {label}
+          </a>
+        ))}
+      </footer>
+
       {/* Preset routes */}
       {routes.length > 0 && (
         <div style={{ width: '100%', maxWidth: 600, marginTop: 48 }}>
@@ -168,7 +233,7 @@ export default function UploadPage() {
               textAlign: 'center',
             }}
           >
-            RUTAS DISPONIBLES
+            {t('upload.routes_title')}
           </div>
           <div
             style={{
@@ -211,7 +276,7 @@ export default function UploadPage() {
                     lineHeight: 1.3,
                   }}
                 >
-                  {loadingRoute === r.file ? 'Cargando…' : r.name}
+                  {loadingRoute === r.file ? t('upload.loading') : r.name}
                 </div>
               </button>
             ))}

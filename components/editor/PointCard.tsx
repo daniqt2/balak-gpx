@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { RouteMarker } from '@/types/points'
 import { POINT_CONFIG } from '@/types/points'
+import { useT } from '@/lib/i18n'
 
 interface PointCardProps {
   marker: RouteMarker
@@ -11,6 +12,7 @@ interface PointCardProps {
 }
 
 export default function PointCard({ marker, onDelete, onEdit }: PointCardProps) {
+  const { t } = useT()
   const [editing, setEditing] = useState(false)
   const [label, setLabel] = useState(marker.label)
   const cfg = POINT_CONFIG[marker.type]
@@ -90,7 +92,7 @@ export default function PointCard({ marker, onDelete, onEdit }: PointCardProps) 
                 cursor: 'pointer',
               }}
             >
-              Editar
+              {t('point.edit')}
             </button>
             <button
               onClick={() => onDelete(marker.id)}

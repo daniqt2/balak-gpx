@@ -7,4 +7,5 @@ export interface EditorState {
   routeGeoJSON: Feature<LineString> | null
   markers: RouteMarker[]
   fileName: string | null
+  fileRenamed: boolean
 }

@@ -1,0 +1,64 @@
+{
+  "toolbar": {
+    "upload": "↑ Subir GPX",
+    "export": "↓ Exportar",
+    "garmin": "Garmin",
+    "garmin_title": "Descarga el GPX y abre Garmin Connect para importarlo",
+    "rename_hint": "Haz clic para renombrar"
+  },
+  "upload": {
+    "subtitle": "Sube una ruta, añade puntos y exporta tu GPX",
+    "drag_title": "Arrastra tu archivo GPX aquí",
+    "drag_sub": "o haz clic para seleccionar",
+    "error_gpx_only": "Solo se admiten archivos .gpx",
+    "error_load": "No se pudo cargar el archivo",
+    "error_process": "Error al procesar el archivo",
+    "loading": "Cargando…",
+    "routes_title": "RUTAS DISPONIBLES"
+  },
+  "map": {
+    "no_route": "Sube un archivo GPX para visualizar la ruta",
+    "click_hint": "Haz clic en la ruta para añadir un punto"
+  },
+  "elevation": {
+    "label": "ELEVACIÓN"
+  },
+  "sidebar": {
+    "tab_points": "PUNTOS",
+    "tab_pacing": "PACING",
+    "no_route": "Sube un archivo GPX para empezar",
+    "click_hint": "Haz clic en la ruta para añadir puntos",
+    "point_type": "TIPO DE PUNTO",
+    "add_by_km": "+ Añadir por km"
+  },
+  "pacing": {
+    "new_zone": "NUEVA ZONA",
+    "km_start": "KM INICIO",
+    "km_end": "KM FIN",
+    "watts": "VATIOS",
+    "name_optional": "NOMBRE (opcional)",
+    "add_zone": "+ Añadir zona",
+    "export_image": "↓ Exportar imagen",
+    "zone_default": "Zona"
+  },
+  "modal": {
+    "title": "AÑADIR PUNTO POR KM",
+    "km_label": "KILÓMETRO (0 – {max})",
+    "km_placeholder": "ej. {mid}",
+    "type_label": "TIPO",
+    "name_optional": "NOMBRE (opcional)",
+    "add_button": "Añadir punto"
+  },
+  "point": {
+    "edit": "Editar",
+    "delete": "Eliminar"
+  },
+  "points": {
+    "puerto": "Puerto",
+    "parada": "Parada / Cafetería",
+    "peligro": "Peligro",
+    "inicio_subida": "Inicio subida",
+    "avituallamiento": "Avituallamiento",
+    "nota": "Nota"
+  }
+}

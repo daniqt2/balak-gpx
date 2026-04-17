@@ -2,20 +2,30 @@
 
 import { useMemo, useRef, useState } from 'react'
 import { RoutePoint } from '@/types/route'
+import { useT } from '@/lib/i18n'
 import { PacingZone } from '@/types/pacing'
+import { RouteMarker } from '@/types/points'
 
 interface ElevationStripProps {
   route: RoutePoint[]
   totalKm: number
   onHover: (point: RoutePoint | null) => void
   pacingZones?: PacingZone[]
-  exportRef?: React.RefObject<HTMLDivElement | null>
+  markers?: RouteMarker[]
 }
 
 const W = 800
 const H = 52
 
-export default function ElevationStrip({ route, totalKm, onHover, pacingZones = [], exportRef }: ElevationStripProps) {
+const STRIP_TYPES = new Set(['puerto', 'inicio_subida', 'avituallamiento'])
+const STRIP_CONFIG: Record<string, { color: string; symbol: string; shortLabel?: boolean }> = {
+  puerto:          { color: '#f59e0b', symbol: '⛰' },
+  inicio_subida:   { color: '#a855f7', symbol: '▲' },
+  avituallamiento: { color: '#22c55e', symbol: '🍌', shortLabel: true },
+}
+
+export default function ElevationStrip({ route, totalKm, onHover, pacingZones = [], markers = [] }: ElevationStripProps) {
+  const { t } = useT()
   const svgRef = useRef<SVGSVGElement>(null)
   const [cursor, setCursor] = useState<{
     svgX: number
@@ -67,7 +77,6 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
 
   return (
     <div
-      ref={exportRef}
       style={{
         background: 'var(--surface)',
         borderTop: '1px solid var(--border)',
@@ -87,7 +96,7 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
           letterSpacing: 1,
         }}
       >
-        ELEVACIÓN
+        {t('elevation.label')}
       </span>
 
       <div style={{ flex: 1, height: H + 4, position: 'relative' }}>
@@ -124,6 +133,22 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
           <path d={data.fillPath} fill="url(#elev-grad)" />
           <path d={data.linePath} stroke="#e94560" strokeWidth="1.5" fill="none" />
 
+          {/* climb / pass markers */}
+          {markers.filter(m => STRIP_TYPES.has(m.type)).map((m) => {
+            const x = (m.distanceFromStart / totalKm) * W
+            const cfg = STRIP_CONFIG[m.type]
+            return (
+              <line
+                key={m.id}
+                x1={x} y1={0} x2={x} y2={H}
+                stroke={cfg.color}
+                strokeWidth="1"
+                strokeDasharray="3 2"
+                opacity={0.7}
+              />
+            )
+          })}
+
           {cursor && (
             <line
               x1={cursor.svgX}
@@ -136,6 +161,43 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
             />
           )}
         </svg>
+
+        {/* Climb / pass labels */}
+        {markers.filter(m => STRIP_TYPES.has(m.type)).map((m) => {
+          const pct = (m.distanceFromStart / totalKm) * 100
+          const cfg = STRIP_CONFIG[m.type]
+          return (
+            <div
+              key={m.id}
+              style={{
+                position: 'absolute',
+                bottom: '100%',
+                left: `clamp(0px, calc(${pct}% - 1px), calc(100% - 2px))`,
+                transform: 'translateX(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <div style={{
+                background: cfg.color,
+                color: '#000',
+                fontSize: 9,
+                fontWeight: 700,
+                padding: '1px 4px',
+                borderRadius: 3,
+                whiteSpace: 'nowrap',
+                maxWidth: 80,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+                {cfg.shortLabel ? cfg.symbol : `${cfg.symbol} ${m.label}`}
+              </div>
+            </div>
+          )
+        })}
 
         {/* HTML tooltip — no SVG text scaling issues */}
         {cursor && (

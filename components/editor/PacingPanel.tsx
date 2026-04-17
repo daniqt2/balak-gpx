@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { PacingZone, ZONE_COLORS } from '@/types/pacing'
+import { useT } from '@/lib/i18n'
 import { generateId } from '@/lib/utils/ids'
 
 interface PacingPanelProps {
@@ -23,6 +24,7 @@ export default function PacingPanel({
   onDelete,
   onExport,
 }: PacingPanelProps) {
+  const { t } = useT()
   const [kmStart, setKmStart] = useState('')
   const [kmEnd, setKmEnd] = useState('')
   const [watts, setWatts] = useState('')
@@ -47,7 +49,7 @@ export default function PacingPanel({
       kmStart: kmStartN,
       kmEnd: kmEndN,
       watts: wattsN,
-      label: label.trim() || `Zona ${zones.length + 1}`,
+      label: label.trim() || `${t('pacing.zone_default')} ${zones.length + 1}`,
       color,
     })
     setKmStart('')
@@ -132,11 +134,11 @@ export default function PacingPanel({
       {/* Add form */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         <div style={{ color: 'var(--text-muted)', fontSize: 10, letterSpacing: 1 }}>
-          NUEVA ZONA
+          {t('pacing.new_zone')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
           <div>
-            <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>KM INICIO</div>
+            <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.km_start')}</div>
             <input
               type="number"
               value={kmStart}
@@ -146,7 +148,7 @@ export default function PacingPanel({
             />
           </div>
           <div>
-            <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>KM FIN</div>
+            <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.km_end')}</div>
             <input
               type="number"
               value={kmEnd}
@@ -157,7 +159,7 @@ export default function PacingPanel({
           </div>
         </div>
         <div>
-          <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>VATIOS</div>
+          <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.watts')}</div>
           <input
             type="number"
             value={watts}
@@ -167,13 +169,13 @@ export default function PacingPanel({
           />
         </div>
         <div>
-          <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>NOMBRE (opcional)</div>
+          <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.name_optional')}</div>
           <input
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            placeholder={`Zona ${zones.length + 1}`}
+            placeholder={`${t('pacing.zone_default')} ${zones.length + 1}`}
             style={inputStyle}
           />
         </div>
@@ -190,7 +192,7 @@ export default function PacingPanel({
             cursor: valid ? 'pointer' : 'default',
           }}
         >
-          + Añadir zona
+          {t('pacing.add_zone')}
         </button>
       </div>
 
@@ -208,7 +210,7 @@ export default function PacingPanel({
             cursor: 'pointer',
           }}
         >
-          ↓ Exportar imagen
+          {t('pacing.export_image')}
         </button>
       )}
     </div>
