@@ -2,6 +2,10 @@
   "toolbar": {
     "upload": "↑ Upload GPX",
     "export": "↓ Export",
+    "export_gpx": "Export GPX",
+    "export_image": "Export pacing image",
+    "export_strip": "Export print strip",
+    "export_cue": "Export cue sticker",
     "garmin": "Garmin",
     "garmin_title": "Downloads the GPX and opens Garmin Connect to import it",
     "rename_hint": "Click to rename"

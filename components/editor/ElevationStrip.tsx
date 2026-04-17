@@ -17,6 +17,7 @@ interface ElevationStripProps {
 
 const W = 800
 const H = 52
+const ELEVATION_COLOR = '#bfe23a'
 
 const STRIP_TYPES = new Set(['puerto', 'inicio_subida', 'avituallamiento'])
 const STRIP_CONFIG: Record<string, { color: string; symbol: string; shortLabel?: boolean }> = {
@@ -111,8 +112,8 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
         >
           <defs>
             <linearGradient id="elev-grad" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#e94560" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#e94560" stopOpacity="0" />
+              <stop offset="0%" stopColor={ELEVATION_COLOR} stopOpacity="0.35" />
+              <stop offset="100%" stopColor={ELEVATION_COLOR} stopOpacity="0" />
             </linearGradient>
           </defs>
           {/* pacing zone bands */}
@@ -132,7 +133,7 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
             )
           })}
           <path d={data.fillPath} fill="url(#elev-grad)" />
-          <path d={data.linePath} stroke="#e94560" strokeWidth="1.5" fill="none" />
+          <path d={data.linePath} stroke={ELEVATION_COLOR} strokeWidth="1.5" fill="none" />
 
           {/* climb / pass markers */}
           {markers.filter(m => STRIP_TYPES.has(m.type)).map((m) => {
@@ -210,7 +211,7 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
               pointerEvents: 'none',
               background: '#111',
               border: '1px solid var(--border)',
-              borderTop: '2px solid #e94560',
+              borderTop: `2px solid ${ELEVATION_COLOR}`,
               borderRadius: '0 0 6px 6px',
               padding: '4px 10px',
               display: 'flex',

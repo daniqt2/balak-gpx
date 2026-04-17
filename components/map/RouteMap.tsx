@@ -91,8 +91,8 @@ export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint
           type: 'line',
           source: 'route',
           paint: {
-            'line-color': '#e94560',
-            'line-width': 3,
+            'line-color': '#16181b',
+            'line-width': 4,
             'line-opacity': 0.9,
           },
         })

@@ -45,7 +45,7 @@ export default function PacingPanel({
   onExportCue,
 }: PacingPanelProps) {
   const { t } = useT()
-  const [kmStart, setKmStart] = useState(zones[0] ? String(zones[zones.length - 1].kmEnd) : '')
+  const [kmStart, setKmStart] = useState(zones[0] ? String(zones[zones.length - 1].kmEnd) : '0')
   const [kmEnd, setKmEnd] = useState('')
   const [zoneLabel, setZoneLabel] = useState<ZoneLabel | ''>('')
   const [watts, setWatts] = useState('')
@@ -71,7 +71,10 @@ export default function PacingPanel({
   }, [suggestedWatts, watts])
 
   useEffect(() => {
-    if (zones.length === 0) return
+    if (zones.length === 0) {
+      setKmStart((current) => (current.trim() === '' ? '0' : current))
+      return
+    }
     const lastZone = zones[zones.length - 1]
     setKmStart((current) => (current.trim() === '' ? String(lastZone.kmEnd) : current))
   }, [zones])

@@ -2,6 +2,10 @@
   "toolbar": {
     "upload": "↑ Subir GPX",
     "export": "↓ Exportar",
+    "export_gpx": "Exportar GPX",
+    "export_image": "Exportar imagen pacing",
+    "export_strip": "Exportar tira impresión",
+    "export_cue": "Exportar pegatina ruta",
     "garmin": "Garmin",
     "garmin_title": "Descarga el GPX y abre Garmin Connect para importarlo",
     "rename_hint": "Haz clic para renombrar"

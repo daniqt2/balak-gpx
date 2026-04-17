@@ -113,19 +113,19 @@ export default function EditorPage() {
     : 0
 
   const handleExport = useCallback(() => {
-    if (!state.route || !state.fileName) return
-    const gpxStr = exportGpx(state.route, state.markers, state.fileName)
+    if (!state.route || !state.routeGeoJSON || !state.fileName) return
+    const gpxStr = exportGpx(state.route, state.routeGeoJSON, state.markers, pacingZones, state.fileName)
     const exportName = state.fileRenamed ? state.fileName : `${state.fileName}-editado`
     downloadFile(gpxStr, `${exportName}.gpx`, 'application/gpx+xml')
-  }, [state])
+  }, [state, pacingZones])
 
   const handleSendToGarmin = useCallback(() => {
-    if (!state.route || !state.fileName) return
-    const gpxStr = exportGpx(state.route, state.markers, state.fileName)
+    if (!state.route || !state.routeGeoJSON || !state.fileName) return
+    const gpxStr = exportGpx(state.route, state.routeGeoJSON, state.markers, pacingZones, state.fileName)
     const exportName = state.fileRenamed ? state.fileName : `${state.fileName}-editado`
     downloadFile(gpxStr, `${exportName}.gpx`, 'application/gpx+xml')
-    window.open('https://connect.garmin.com/modern/import-data', '_blank')
-  }, [state])
+    window.open('https://connect.garmin.com/app/courses', '_blank')
+  }, [state, pacingZones])
 
   const handleExportPacing = useCallback(async () => {
     if (!state.routeGeoJSON || !state.route) return
@@ -202,6 +202,9 @@ export default function EditorPage() {
         totalGain={totalGain}
         onUpload={handleUpload}
         onExport={handleExport}
+        onExportPacing={handleExportPacing}
+        onExportPacingStrip={handleExportPacingStrip}
+        onExportPacingCue={handleExportPacingCue}
         onRename={(name) => setState((prev) => ({ ...prev, fileName: name, fileRenamed: true }))}
         onSendToGarmin={handleSendToGarmin}
       />

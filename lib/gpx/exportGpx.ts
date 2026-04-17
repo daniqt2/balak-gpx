@@ -1,5 +1,19 @@
 import { RoutePoint } from '@/types/route'
 import { RouteMarker, POINT_CONFIG } from '@/types/points'
+import { PacingZone } from '@/types/pacing'
+import type { Feature, LineString } from 'geojson'
+import { pointAtKm } from '@/lib/geo/pointAtKm'
+
+const PACING_DUPLICATE_KM_THRESHOLD = 0.15
+
+interface ExportWaypoint {
+  lat: number
+  lon: number
+  label: string
+  sym: string
+  type: string
+  desc: string
+}
 
 function nearestEle(route: RoutePoint[], lat: number, lon: number): number | null {
   let best = Infinity, ele: number | null = null
@@ -12,7 +26,9 @@ function nearestEle(route: RoutePoint[], lat: number, lon: number): number | nul
 
 export function exportGpx(
   route: RoutePoint[],
+  routeGeoJSON: Feature<LineString>,
   markers: RouteMarker[],
+  pacingZones: PacingZone[],
   fileName: string
 ): string {
   const trkpts = route
@@ -22,16 +38,44 @@ export function exportGpx(
     })
     .join('\n')
 
-  const wpts = markers
-    .map((m) => {
-      const cfg = POINT_CONFIG[m.type]
-      const ele = nearestEle(route, m.lat, m.lon)
+  const pacingWaypoints: ExportWaypoint[] = pacingZones
+    .filter((zone) => !markers.some((marker) => Math.abs(marker.distanceFromStart - zone.kmStart) < PACING_DUPLICATE_KM_THRESHOLD))
+    .map((zone) => {
+      const [lon, lat] = pointAtKm(routeGeoJSON, zone.kmStart)
+      return {
+        lat,
+        lon,
+        label: `${zone.label} - ${zone.watts}w`,
+        sym: 'Flag, Green',
+        type: 'pacing_start',
+        desc: `Pacing start · km ${zone.kmStart.toFixed(1)}`,
+      }
+    })
+
+  const waypoints: ExportWaypoint[] = [
+    ...markers.map((marker) => {
+      const cfg = POINT_CONFIG[marker.type]
+      return {
+        lat: marker.lat,
+        lon: marker.lon,
+        label: marker.label,
+        sym: cfg.garminSym,
+        type: marker.type,
+        desc: `km ${marker.distanceFromStart.toFixed(1)}`,
+      }
+    }),
+    ...pacingWaypoints,
+  ]
+
+  const wpts = waypoints
+    .map((waypoint) => {
+      const ele = nearestEle(route, waypoint.lat, waypoint.lon)
       const eleTag = ele != null ? `\n    <ele>${ele.toFixed(1)}</ele>` : ''
-      return `  <wpt lat="${m.lat.toFixed(7)}" lon="${m.lon.toFixed(7)}">${eleTag}
-    <name>${escapeXml(m.label)}</name>
-    <sym>${cfg.garminSym}</sym>
-    <type>${m.type}</type>
-    <desc>km ${m.distanceFromStart.toFixed(1)}</desc>
+      return `  <wpt lat="${waypoint.lat.toFixed(7)}" lon="${waypoint.lon.toFixed(7)}">${eleTag}
+    <name>${escapeXml(waypoint.label)}</name>
+    <sym>${waypoint.sym}</sym>
+    <type>${waypoint.type}</type>
+    <desc>${escapeXml(waypoint.desc)}</desc>
   </wpt>`
     })
     .join('\n')

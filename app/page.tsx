@@ -258,8 +258,8 @@ export default function UploadPage() {
                 }}
                 onMouseEnter={(e) => {
                   if (loadingRoute !== r.file) {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = '#e94560'
-                    ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(233,69,96,0.05)'
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = '#bfe23a'
+                    ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(191,226,58,0.08)'
                   }
                 }}
                 onMouseLeave={(e) => {

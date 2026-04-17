@@ -11,6 +11,7 @@ const LEGEND_H = 80
 const TOTAL_H = MAP_H + ELEV_H + LEGEND_H
 const PAD = 48
 const TILE_SIZE = 256
+const ELEVATION_COLOR = '#bfe23a'
 
 function lonToTileX(lon: number, z: number) {
   return ((lon + 180) / 360) * Math.pow(2, z)
@@ -206,11 +207,11 @@ export async function exportPacingImage(
     ctx.lineTo(elevCoords[elevCoords.length - 1].x, elevY + ELEV_H)
     ctx.closePath()
     const grad = ctx.createLinearGradient(0, elevY, 0, elevY + ELEV_H)
-    grad.addColorStop(0, 'rgba(233,69,96,0.35)')
-    grad.addColorStop(1, 'rgba(233,69,96,0)')
+    grad.addColorStop(0, 'rgba(191,226,58,0.35)')
+    grad.addColorStop(1, 'rgba(191,226,58,0)')
     ctx.fillStyle = grad; ctx.fill()
     ctx.beginPath()
-    ctx.strokeStyle = '#e94560'; ctx.lineWidth = 2
+    ctx.strokeStyle = ELEVATION_COLOR; ctx.lineWidth = 2
     elevCoords.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)))
     ctx.stroke()
   }

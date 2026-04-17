@@ -10,6 +10,9 @@ interface ToolbarProps {
   totalGain: number
   onUpload: (text: string, name: string) => void
   onExport: () => void
+  onExportPacing: () => void
+  onExportPacingStrip: () => void
+  onExportPacingCue: () => void
   onRename: (name: string) => void
   onSendToGarmin: () => void
 }
@@ -20,18 +23,34 @@ export default function Toolbar({
   totalGain,
   onUpload,
   onExport,
+  onExportPacing,
+  onExportPacingStrip,
+  onExportPacingCue,
   onRename,
   onSendToGarmin,
 }: ToolbarProps) {
   const { t, lang, setLang } = useT()
   const inputRef = useRef<HTMLInputElement>(null)
+  const exportMenuRef = useRef<HTMLDivElement>(null)
   const [editing, setEditing] = useState(false)
+  const [exportOpen, setExportOpen] = useState(false)
   const [draft, setDraft] = useState('')
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (editing) nameInputRef.current?.select()
   }, [editing])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (!exportMenuRef.current?.contains(event.target as Node)) {
+        setExportOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   function startEdit() {
     if (!fileName) return
@@ -159,22 +178,81 @@ export default function Toolbar({
         {t('toolbar.upload')}
       </button>
 
-      <button
-        onClick={onExport}
-        disabled={!fileName}
-        style={{
-          background: fileName ? '#fff' : '#333',
-          border: 'none',
-          color: fileName ? '#111' : '#666',
-          padding: '6px 14px',
-          borderRadius: 4,
-          fontSize: 12,
-          fontWeight: 700,
-          cursor: fileName ? 'pointer' : 'default',
-        }}
-      >
-        {t('toolbar.export')}
-      </button>
+      <div ref={exportMenuRef} style={{ position: 'relative' }}>
+        <button
+          onClick={() => fileName && setExportOpen((open) => !open)}
+          disabled={!fileName}
+          style={{
+            background: fileName ? '#fff' : '#333',
+            border: 'none',
+            color: fileName ? '#111' : '#666',
+            padding: '6px 14px',
+            borderRadius: 4,
+            fontSize: 12,
+            fontWeight: 700,
+            cursor: fileName ? 'pointer' : 'default',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          {t('toolbar.export')}
+          <span style={{ fontSize: 10 }}>{exportOpen ? '▲' : '▼'}</span>
+        </button>
+
+        {exportOpen && fileName && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 'calc(100% + 8px)',
+              right: 0,
+              minWidth: 190,
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
+              padding: 6,
+              zIndex: 20,
+            }}
+          >
+            {[
+              { label: t('toolbar.export_gpx'), action: onExport },
+              { label: t('toolbar.export_image'), action: onExportPacing },
+              { label: t('toolbar.export_strip'), action: onExportPacingStrip },
+              { label: t('toolbar.export_cue'), action: onExportPacingCue },
+            ].map((item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  item.action()
+                  setExportOpen(false)
+                }}
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  textAlign: 'left',
+                  fontSize: 12,
+                  padding: '9px 10px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  ;(e.currentTarget as HTMLButtonElement).style.background = '#bfe23a'
+                  ;(e.currentTarget as HTMLButtonElement).style.color = '#111'
+                }}
+                onMouseLeave={(e) => {
+                  ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                  ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <button
         onClick={onSendToGarmin}

@@ -145,9 +145,9 @@ export async function exportPacingCueImage(
         ctx.font = 'bold 10px Arial, sans-serif'
         ctx.fillText(entry.marker.distanceFromStart.toFixed(0), kmColX, y)
 
-        ctx.fillStyle = '#374151'
-        ctx.font = '10px Arial, sans-serif'
-        ctx.fillText(trim(`${cfg.emoji} ${entry.marker.label}`, 15), pointColX, y)
+      ctx.fillStyle = '#374151'
+      ctx.font = '9px Arial, sans-serif'
+      ctx.fillText(trim(`${cfg.emoji} ${entry.marker.label}`, 20), pointColX, y)
       } else {
         ctx.fillStyle = `${entry.zone.color}33`
         ctx.fillRect(PAD - 4, y - 10, WIDTH - (PAD - 4) * 2, 16)
