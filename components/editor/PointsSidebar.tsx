@@ -22,6 +22,7 @@ interface PointsSidebarProps {
   onAddZone: (zone: PacingZone) => void
   onDeleteZone: (id: string) => void
   onExportPacing: () => void
+  onExportPacingStrip: () => void
 }
 
 export default function PointsSidebar({
@@ -39,6 +40,7 @@ export default function PointsSidebar({
   onAddZone,
   onDeleteZone,
   onExportPacing,
+  onExportPacingStrip,
 }: PointsSidebarProps) {
   const { t } = useT()
   const [tab, setTab] = useState<'puntos' | 'pacing'>('puntos')
@@ -174,6 +176,7 @@ export default function PointsSidebar({
               onAdd={onAddZone}
               onDelete={onDeleteZone}
               onExport={onExportPacing}
+              onExportStrip={onExportPacingStrip}
             />
           )}
         </div>

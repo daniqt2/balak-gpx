@@ -13,6 +13,7 @@ import { exportGpx } from '@/lib/gpx/exportGpx'
 import { downloadFile } from '@/lib/utils/downloadFile'
 import { generateId } from '@/lib/utils/ids'
 import { exportPacingImage } from '@/lib/export/exportPacingImage'
+import { exportPacingStripImage } from '@/lib/export/exportPacingStripImage'
 import Toolbar from '@/components/editor/Toolbar'
 import PointsSidebar from '@/components/editor/PointsSidebar'
 import ElevationStrip from '@/components/editor/ElevationStrip'
@@ -137,6 +138,17 @@ export default function EditorPage() {
     )
   }, [state.routeGeoJSON, state.route, pacingZones, totalKm, ftp, state.fileName])
 
+  const handleExportPacingStrip = useCallback(async () => {
+    if (!state.route || !state.route.some((point) => point.ele != null)) return
+    await exportPacingStripImage(
+      state.route,
+      totalKm,
+      pacingZones,
+      state.markers,
+      state.fileName ?? 'ruta'
+    )
+  }, [state.route, state.markers, totalKm, pacingZones, state.fileName])
+
   if (isMobile) {
     return (
       <MobileEditor
@@ -157,6 +169,7 @@ export default function EditorPage() {
         onAddZone={(z) => setPacingZones((prev) => [...prev, z])}
         onDeleteZone={(id) => setPacingZones((prev) => prev.filter((z) => z.id !== id))}
         onExportPacing={handleExportPacing}
+        onExportPacingStrip={handleExportPacingStrip}
         onAddByKm={handleAddByKm}
       />
     )
@@ -206,6 +219,7 @@ export default function EditorPage() {
           onAddZone={(z) => setPacingZones((prev) => [...prev, z])}
           onDeleteZone={(id) => setPacingZones((prev) => prev.filter((z) => z.id !== id))}
           onExportPacing={handleExportPacing}
+          onExportPacingStrip={handleExportPacingStrip}
         />
       </div>
 

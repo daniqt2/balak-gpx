@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
 import { useT } from '@/lib/i18n'
 
@@ -74,12 +75,12 @@ export default function Toolbar({
         flexShrink: 0,
       }}
     >
-      <a
+      <Link
         href="/"
         style={{ fontWeight: 900, fontSize: 16, letterSpacing: 1, color: '#fff', textDecoration: 'none' }}
       >
         BALAK
-      </a>
+      </Link>
       <span style={{ fontWeight: 400, fontSize: 12, letterSpacing: 3, color: '#555' }}>
         GPX EDITOR
       </span>

@@ -39,6 +39,7 @@
     "name_optional": "NOMBRE (opcional)",
     "add_zone": "+ Añadir zona",
     "export_image": "↓ Exportar imagen",
+    "export_strip": "↓ Exportar tira impresión",
     "zone_default": "Zona"
   },
   "modal": {

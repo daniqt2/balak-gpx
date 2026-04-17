@@ -22,6 +22,18 @@ interface RouteMapProps {
 
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
+function createPopupContent(label: string, distanceFromStart: number) {
+  const wrapper = document.createElement('div')
+  const title = document.createElement('strong')
+  title.textContent = label
+
+  const distance = document.createElement('div')
+  distance.textContent = `km ${distanceFromStart.toFixed(1)}`
+
+  wrapper.append(title, distance)
+  return wrapper
+}
+
 export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint, pacingZones, onMapReady }: RouteMapProps) {
   const { t } = useT()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -145,8 +157,8 @@ export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint
       const m = new maplibregl.Marker({ element: el })
         .setLngLat([marker.lon, marker.lat])
         .setPopup(
-          new maplibregl.Popup({ offset: 20 }).setHTML(
-            `<strong>${marker.label}</strong><br>km ${marker.distanceFromStart.toFixed(1)}`
+          new maplibregl.Popup({ offset: 20 }).setDOMContent(
+            createPopupContent(marker.label, marker.distanceFromStart)
           )
         )
         .addTo(map)

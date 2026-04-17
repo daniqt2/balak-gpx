@@ -35,6 +35,7 @@ interface MobileEditorProps {
   onAddZone: (z: PacingZone) => void
   onDeleteZone: (id: string) => void
   onExportPacing: () => void
+  onExportPacingStrip: () => void
   onAddByKm: (km: number, type: PointType, label: string) => void
 }
 
@@ -42,7 +43,7 @@ export default function MobileEditor({
   state, activeType, pacingZones, ftp, totalKm,
   onUpload, onExport, onSendToGarmin, onMapClick,
   onDelete, onEdit, onTypeChange, onFtpChange,
-  onAddZone, onDeleteZone, onExportPacing, onAddByKm,
+  onAddZone, onDeleteZone, onExportPacing, onExportPacingStrip, onAddByKm,
 }: MobileEditorProps) {
   const { t } = useT()
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -183,6 +184,7 @@ export default function MobileEditor({
                     zones={pacingZones} totalKm={totalKm} ftp={ftp}
                     onFtpChange={onFtpChange} onAdd={onAddZone}
                     onDelete={onDeleteZone} onExport={onExportPacing}
+                    onExportStrip={onExportPacingStrip}
                   />
             )}
           </div>

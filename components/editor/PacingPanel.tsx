@@ -1,9 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PacingZone, ZONE_COLORS } from '@/types/pacing'
 import { useT } from '@/lib/i18n'
 import { generateId } from '@/lib/utils/ids'
+
+const FTP_ZONE_DEFAULTS = [
+  { label: 'Z1', factor: 0.55 },
+  { label: 'Z2', factor: 0.66 },
+  { label: 'Z3', factor: 0.83 },
+  { label: 'Z4', factor: 0.98 },
+  { label: 'Z5', factor: 1.13 },
+  { label: 'Z6', factor: 1.35 },
+  { label: 'Z7', factor: 1.5 },
+] as const
+
+type ZoneLabel = (typeof FTP_ZONE_DEFAULTS)[number]['label']
+
+function getZoneByLabel(label: ZoneLabel | '') {
+  return FTP_ZONE_DEFAULTS.find((zone) => zone.label === label) ?? null
+}
 
 interface PacingPanelProps {
   zones: PacingZone[]
@@ -13,6 +29,7 @@ interface PacingPanelProps {
   onAdd: (zone: PacingZone) => void
   onDelete: (id: string) => void
   onExport: () => void
+  onExportStrip: () => void
 }
 
 export default function PacingPanel({
@@ -23,23 +40,39 @@ export default function PacingPanel({
   onAdd,
   onDelete,
   onExport,
+  onExportStrip,
 }: PacingPanelProps) {
   const { t } = useT()
-  const [kmStart, setKmStart] = useState('')
+  const [kmStart, setKmStart] = useState(zones[0] ? String(zones[zones.length - 1].kmEnd) : '')
   const [kmEnd, setKmEnd] = useState('')
+  const [zoneLabel, setZoneLabel] = useState<ZoneLabel | ''>('')
   const [watts, setWatts] = useState('')
-  const [label, setLabel] = useState('')
 
   const kmStartN = parseFloat(kmStart)
   const kmEndN = parseFloat(kmEnd)
   const wattsN = parseFloat(watts)
+  const selectedZone = getZoneByLabel(zoneLabel)
+  const suggestedWatts = ftp > 0 && selectedZone ? String(Math.round(ftp * selectedZone.factor)) : ''
   const valid =
+    zoneLabel !== '' &&
     !isNaN(kmStartN) &&
     !isNaN(kmEndN) &&
     !isNaN(wattsN) &&
     kmEndN > kmStartN &&
     kmStartN >= 0 &&
     kmEndN <= totalKm + 0.5
+
+  useEffect(() => {
+    if (watts.trim() === '') {
+      setWatts(suggestedWatts)
+    }
+  }, [suggestedWatts, watts])
+
+  useEffect(() => {
+    if (zones.length === 0) return
+    const lastZone = zones[zones.length - 1]
+    setKmStart((current) => (current.trim() === '' ? String(lastZone.kmEnd) : current))
+  }, [zones])
 
   function handleAdd() {
     if (!valid) return
@@ -49,13 +82,13 @@ export default function PacingPanel({
       kmStart: kmStartN,
       kmEnd: kmEndN,
       watts: wattsN,
-      label: label.trim() || `${t('pacing.zone_default')} ${zones.length + 1}`,
+      label: zoneLabel,
       color,
     })
-    setKmStart('')
+    setKmStart(String(kmEndN))
     setKmEnd('')
     setWatts('')
-    setLabel('')
+    setZoneLabel('')
   }
 
   const inputStyle: React.CSSProperties = {
@@ -159,23 +192,27 @@ export default function PacingPanel({
           </div>
         </div>
         <div>
+            <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.name_optional')}</div>
+          <select
+            value={zoneLabel}
+            onChange={(e) => setZoneLabel(e.target.value as ZoneLabel)}
+            style={inputStyle}
+          >
+            <option value="">{t('pacing.zone_default')}</option>
+            {FTP_ZONE_DEFAULTS.map((zone) => (
+              <option key={zone.label} value={zone.label}>
+                {zone.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
           <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.watts')}</div>
           <input
             type="number"
             value={watts}
             onChange={(e) => setWatts(e.target.value)}
             placeholder="200"
-            style={inputStyle}
-          />
-        </div>
-        <div>
-          <div style={{ color: '#555', fontSize: 9, marginBottom: 3 }}>{t('pacing.name_optional')}</div>
-          <input
-            type="text"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            placeholder={`${t('pacing.zone_default')} ${zones.length + 1}`}
             style={inputStyle}
           />
         </div>
@@ -197,21 +234,38 @@ export default function PacingPanel({
       </div>
 
       {zones.length > 0 && (
-        <button
-          onClick={onExport}
-          style={{
-            background: '#fff',
-            border: 'none',
-            color: '#111',
-            borderRadius: 4,
-            padding: '7px',
-            fontWeight: 700,
-            fontSize: 11,
-            cursor: 'pointer',
-          }}
-        >
-          {t('pacing.export_image')}
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <button
+            onClick={onExport}
+            style={{
+              background: '#fff',
+              border: 'none',
+              color: '#111',
+              borderRadius: 4,
+              padding: '7px',
+              fontWeight: 700,
+              fontSize: 11,
+              cursor: 'pointer',
+            }}
+          >
+            {t('pacing.export_image')}
+          </button>
+          <button
+            onClick={onExportStrip}
+            style={{
+              background: 'var(--surface2)',
+              border: '1px solid var(--border)',
+              color: '#fff',
+              borderRadius: 4,
+              padding: '7px',
+              fontWeight: 700,
+              fontSize: 11,
+              cursor: 'pointer',
+            }}
+          >
+            {t('pacing.export_strip')}
+          </button>
+        </div>
       )}
     </div>
   )

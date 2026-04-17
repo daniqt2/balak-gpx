@@ -1,6 +1,8 @@
 import type { Feature, LineString } from 'geojson'
 import { PacingZone } from '@/types/pacing'
 import { RoutePoint } from '@/types/route'
+import { sliceRouteByKm } from '@/lib/geo/sliceRoute'
+import { buildRouteProfile } from '@/lib/geo/routeProfile'
 
 const W = 1400
 const MAP_H = 560
@@ -129,9 +131,14 @@ export async function exportPacingImage(
 
   // ── Pacing zone colored segments ─────────────────────────────────────────
   pacingZones.forEach(zone => {
-    const si = Math.round((zone.kmStart / totalKm) * (coords.length - 1))
-    const ei = Math.round((zone.kmEnd / totalKm) * (coords.length - 1))
-    const slice = px.slice(si, ei + 1)
+    let slice: { x: number; y: number }[]
+    try {
+      slice = sliceRouteByKm(routeGeoJSON, zone.kmStart, zone.kmEnd)
+        .geometry.coordinates
+        .map(([lon, lat]) => toPixel(lon, lat))
+    } catch {
+      return
+    }
     if (slice.length < 2) return
     ctx.beginPath()
     ctx.strokeStyle = zone.color
@@ -176,14 +183,15 @@ export async function exportPacingImage(
   ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1
   ctx.beginPath(); ctx.moveTo(0, elevY); ctx.lineTo(W, elevY); ctx.stroke()
 
-  const elevPts = route.filter(p => p.ele != null && p.ele > 0)
+  const elevPts = buildRouteProfile(route).filter(p => p.ele != null)
   if (elevPts.length > 1) {
     const minE = Math.min(...elevPts.map(p => p.ele!))
     const maxE = Math.max(...elevPts.map(p => p.ele!))
     const range = maxE - minE || 1
     const eW = W - PAD * 2, eH = ELEV_H - 24
-    const elevCoords = elevPts.map((p, i) => ({
-      x: PAD + (i / (elevPts.length - 1)) * eW,
+    const profileTotalKm = elevPts[elevPts.length - 1].distKm || 1
+    const elevCoords = elevPts.map((p) => ({
+      x: PAD + (p.distKm / profileTotalKm) * eW,
       y: elevY + ELEV_H - 12 - ((p.ele! - minE) / range) * eH,
     }))
     pacingZones.forEach(zone => {

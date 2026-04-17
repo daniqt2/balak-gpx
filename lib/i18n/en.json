@@ -39,6 +39,7 @@
     "name_optional": "NAME (optional)",
     "add_zone": "+ Add zone",
     "export_image": "↓ Export image",
+    "export_strip": "↓ Export print strip",
     "zone_default": "Zone"
   },
   "modal": {

@@ -88,7 +88,7 @@ export default function UploadPage() {
         alignItems: 'center',
         justifyContent: 'center',
         background: 'var(--bg)',
-        padding: '40px 24px',
+        padding: '40px 24px calc(132px + env(safe-area-inset-bottom))',
       }}
     >
       {/* Language toggle */}

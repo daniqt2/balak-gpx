@@ -5,6 +5,7 @@ import { RoutePoint } from '@/types/route'
 import { useT } from '@/lib/i18n'
 import { PacingZone } from '@/types/pacing'
 import { RouteMarker } from '@/types/points'
+import { buildRouteProfile } from '@/lib/geo/routeProfile'
 
 interface ElevationStripProps {
   route: RoutePoint[]
@@ -35,17 +36,18 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
   } | null>(null)
 
   const data = useMemo(() => {
-    const pts = route.filter((p) => p.ele != null && p.ele > 0)
+    const pts = buildRouteProfile(route).filter((p) => p.ele != null)
     if (pts.length < 2) return null
 
     const min = Math.min(...pts.map((p) => p.ele!))
     const max = Math.max(...pts.map((p) => p.ele!))
     const range = max - min || 1
+    const totalDistance = pts[pts.length - 1].distKm || 1
 
-    const coords = pts.map((p, i) => {
-      const x = (i / (pts.length - 1)) * W
+    const coords = pts.map((p) => {
+      const x = (p.distKm / totalDistance) * W
       const y = H - ((p.ele! - min) / range) * (H - 6) - 3
-      return { x, y, point: p, km: (i / (pts.length - 1)) * totalKm }
+      return { x, y, point: p, km: p.distKm }
     })
 
     const linePath = coords
