@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash *)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-eslint --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-eslint --no-src-dir --import-alias \"@/*\" --yes --skip-git)",
+      "Read(//private/tmp/**)",
+      "Bash(npx create-next-app@latest gpx-balak-init --typescript --tailwind --app --no-eslint --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(node_modules/.bin/tsc --version)",
+      "Bash(node /Users/daniquesada/Documents/balak_proj/gpx-balak/node_modules/typescript/bin/tsc --noEmit)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000/editor)",
+      "Bash(cursor *)",
+      "Bash(node *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Initial commit: BALAK GPX Editor *)"
+    ]
+  }
+}
