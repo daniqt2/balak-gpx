@@ -16,11 +16,12 @@ interface RouteMapProps {
   onMapClick: (lng: number, lat: number, distFromStart: number) => void
   hoverPoint: { lat: number; lon: number } | null
   pacingZones: PacingZone[]
+  onMapReady?: (map: maplibregl.Map) => void
 }
 
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint, pacingZones }: RouteMapProps) {
+export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint, pacingZones, onMapReady }: RouteMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<maplibregl.Marker[]>([])
@@ -45,10 +46,13 @@ export default function RouteMap({ routeGeoJSON, markers, onMapClick, hoverPoint
       },
       center: [-3.7, 40.4],
       zoom: 6,
+      // needed for map.getCanvas().toDataURL() export
+      ...(({ preserveDrawingBuffer: true } as unknown) as object),
     })
 
     map.addControl(new maplibregl.NavigationControl(), 'top-right')
     mapRef.current = map
+    onMapReady?.(map)
 
     return () => {
       map.remove()

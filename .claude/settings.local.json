@@ -20,7 +20,10 @@
       "Bash(git commit -m 'Initial commit: BALAK GPX Editor *)",
       "Bash(git remote *)",
       "Bash(git branch *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git commit -m 'fix: add @types/geojson for production build *)",
+      "Bash(git commit -m 'fix: update pnpm lockfile *)",
+      "Bash(git commit -m 'feat: export pacing image combines map + elevation strip *)"
     ]
   }
 }

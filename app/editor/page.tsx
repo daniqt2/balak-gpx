@@ -35,6 +35,7 @@ export default function EditorPage() {
   const [pacingZones, setPacingZones] = useState<PacingZone[]>([])
   const [ftp, setFtp] = useState(0)
   const elevationRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<unknown>(null)
 
   useEffect(() => {
     const stored = sessionStorage.getItem('gpx-editor-data')
@@ -107,11 +108,51 @@ export default function EditorPage() {
   }, [state])
 
   const handleExportPacing = useCallback(async () => {
-    const el = elevationRef.current
-    if (!el) return
+    const elevEl = elevationRef.current
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = mapInstanceRef.current as any
+    if (!elevEl) return
+
+    const scale = 2
     const html2canvas = (await import('html2canvas')).default
-    const canvas = await html2canvas(el, { backgroundColor: '#1a1a1a', scale: 2 })
-    canvas.toBlob((blob) => {
+
+    // Elevation strip canvas
+    const elevCanvas = await html2canvas(elevEl, { backgroundColor: '#1a1a1a', scale })
+
+    // Map canvas (WebGL — must use map's own canvas)
+    let mapImgData: string | null = null
+    if (map) {
+      try {
+        map.getCanvas().getContext('webgl', { preserveDrawingBuffer: true })
+        mapImgData = map.getCanvas().toDataURL('image/png')
+      } catch { /* map not ready */ }
+    }
+
+    const elevW = elevCanvas.width
+    const elevH = elevCanvas.height
+    const mapH = mapImgData ? elevW * 0.55 : 0
+
+    const out = document.createElement('canvas')
+    out.width = elevW
+    out.height = Math.round(mapH) + elevH
+    const ctx = out.getContext('2d')!
+    ctx.fillStyle = '#111'
+    ctx.fillRect(0, 0, out.width, out.height)
+
+    if (mapImgData) {
+      const img = new Image()
+      await new Promise<void>((res) => {
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, elevW, Math.round(mapH))
+          res()
+        }
+        img.src = mapImgData!
+      })
+    }
+
+    ctx.drawImage(elevCanvas, 0, Math.round(mapH))
+
+    out.toBlob((blob) => {
       if (!blob) return
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -152,6 +193,7 @@ export default function EditorPage() {
           onMapClick={handleMapClick}
           hoverPoint={hoverPoint}
           pacingZones={pacingZones}
+          onMapReady={(m) => { mapInstanceRef.current = m }}
         />
         <PointsSidebar
           markers={state.markers}
