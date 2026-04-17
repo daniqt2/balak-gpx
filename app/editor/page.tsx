@@ -17,6 +17,8 @@ import Toolbar from '@/components/editor/Toolbar'
 import PointsSidebar from '@/components/editor/PointsSidebar'
 import ElevationStrip from '@/components/editor/ElevationStrip'
 import AddByKmModal from '@/components/editor/AddByKmModal'
+import MobileEditor from '@/components/mobile/MobileEditor'
+import { useIsMobile } from '@/lib/hooks/useIsMobile'
 
 const RouteMap = dynamic(() => import('@/components/map/RouteMap'), { ssr: false })
 
@@ -30,6 +32,7 @@ const DEFAULT_STATE: EditorState = {
 
 export default function EditorPage() {
   const router = useRouter()
+  const isMobile = useIsMobile()
   const [state, setState] = useState<EditorState>(DEFAULT_STATE)
   const [activeType, setActiveType] = useState<PointType>('puerto')
   const [showKmModal, setShowKmModal] = useState(false)
@@ -133,6 +136,31 @@ export default function EditorPage() {
       state.fileName ?? 'ruta'
     )
   }, [state.routeGeoJSON, state.route, pacingZones, totalKm, ftp, state.fileName])
+
+  if (isMobile) {
+    return (
+      <MobileEditor
+        state={state}
+        activeType={activeType}
+        pacingZones={pacingZones}
+        ftp={ftp}
+        totalKm={totalKm}
+        totalGain={totalGain}
+        onUpload={handleUpload}
+        onExport={handleExport}
+        onSendToGarmin={handleSendToGarmin}
+        onMapClick={handleMapClick}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        onTypeChange={setActiveType}
+        onFtpChange={setFtp}
+        onAddZone={(z) => setPacingZones((prev) => [...prev, z])}
+        onDeleteZone={(id) => setPacingZones((prev) => prev.filter((z) => z.id !== id))}
+        onExportPacing={handleExportPacing}
+        onAddByKm={handleAddByKm}
+      />
+    )
+  }
 
   return (
     <div

@@ -80,18 +80,17 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
       style={{
         background: 'var(--surface)',
         borderTop: '1px solid var(--border)',
-        height: 80,
         display: 'flex',
-        alignItems: 'center',
-        padding: '0 16px',
-        gap: 12,
+        flexDirection: 'column',
+        padding: '4px 16px 6px',
+        gap: 2,
         flexShrink: 0,
       }}
     >
       <span
         style={{
           color: 'var(--text-muted)',
-          fontSize: 10,
+          fontSize: 9,
           whiteSpace: 'nowrap',
           letterSpacing: 1,
         }}
@@ -99,7 +98,7 @@ export default function ElevationStrip({ route, totalKm, onHover, pacingZones = 
         {t('elevation.label')}
       </span>
 
-      <div style={{ flex: 1, height: H + 4, position: 'relative' }}>
+      <div style={{ height: H + 4, position: 'relative' }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
