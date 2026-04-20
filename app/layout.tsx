@@ -7,11 +7,11 @@ const BASE_URL = 'https://gpx.balakride.com'
 
 export const metadata: Metadata = {
   title: {
-    default: 'BALAK GPX Editor — Cycling Route Planner',
+    default: 'BALAK GPX Editor — Editor de rutas ciclistas',
     template: '%s | BALAK GPX Editor',
   },
   description:
-    'Free cycling GPX editor. Upload a GPX route, annotate mountain passes, feed zones and hazards, add pacing zones, and export back to Garmin or Strava.',
+    'Editor GPX para ciclismo. Sube una ruta, añade puertos, avituallamientos y peligros, define zonas de pacing y expórtala para Garmin o para imprimir.',
   keywords: [
     'GPX editor', 'cycling route planner', 'GPX file editor', 'bike route editor',
     'Garmin route', 'cycling waypoints', 'pacing zones cycling', 'BALAK',
@@ -25,16 +25,17 @@ export const metadata: Metadata = {
     type: 'website',
     url: BASE_URL,
     siteName: 'BALAK GPX Editor',
-    title: 'BALAK GPX Editor — Cycling Route Planner',
+    title: 'BALAK GPX Editor — Editor de rutas ciclistas',
     description:
-      'Upload a GPX route, annotate mountain passes, feed zones and hazards, add pacing zones, and export back to Garmin or Strava.',
+      'Sube una ruta GPX, añade puertos, avituallamientos y peligros, define zonas de pacing y expórtala para Garmin o para imprimir.',
     images: [{ url: '/favicon.png', width: 1024, height: 1024, alt: 'BALAK GPX Editor' }],
-    locale: 'en_US',
+    locale: 'es_ES',
+    alternateLocale: ['en_US'],
   },
   twitter: {
     card: 'summary',
-    title: 'BALAK GPX Editor — Cycling Route Planner',
-    description: 'Free tool to annotate and edit cycling GPX routes.',
+    title: 'BALAK GPX Editor — Editor de rutas ciclistas',
+    description: 'Herramienta para subir, anotar y exportar rutas GPX de ciclismo.',
     images: ['/favicon.png'],
     creator: '@balak.ride',
   },
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" style={{ height: '100%' }}>
+    <html lang="es" style={{ height: '100%' }}>
       <head>
         <script
           type="application/ld+json"
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'WebApplication',
               name: 'BALAK GPX Editor',
               url: BASE_URL,
-              description: 'Free cycling GPX editor to annotate routes with mountain passes, feed zones, pacing and more.',
+              description: 'Editor GPX para ciclismo para anotar rutas con puertos, avituallamientos, pacing y más.',
               applicationCategory: 'SportsApplication',
               operatingSystem: 'Web',
               offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
