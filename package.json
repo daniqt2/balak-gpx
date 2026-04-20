@@ -12,6 +12,7 @@
   "dependencies": {
     "@tmcw/togeojson": "^7.1.2",
     "@turf/turf": "^7.3.4",
+    "@vercel/analytics": "^2.0.1",
     "html2canvas": "^1.4.1",
     "maplibre-gl": "^5.23.0",
     "nanoid": "^5.1.9",

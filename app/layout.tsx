@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import I18nWrapper from '@/components/I18nWrapper'
 
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body style={{ height: '100%', margin: 0 }}>
         <I18nWrapper>{children}</I18nWrapper>
+        <Analytics />
       </body>
     </html>
   )

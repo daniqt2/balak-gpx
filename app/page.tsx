@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { parseGpx, routeToGeoJSON } from '@/lib/gpx/parseGpx'
 import { useT } from '@/lib/i18n'
+import TutorialSection from '@/components/home/TutorialSection'
 
 interface GpxEntry {
   file: string
@@ -83,12 +84,15 @@ export default function UploadPage() {
     <main
       style={{
         minHeight: '100vh',
+        height: 'auto',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        overflow: 'visible',
         background: 'var(--bg)',
-        padding: '40px 24px calc(132px + env(safe-area-inset-bottom))',
+        width: '100%',
+        padding: '40px 24px calc(320px + env(safe-area-inset-bottom))',
       }}
     >
       {/* Language toggle */}
@@ -127,6 +131,24 @@ export default function UploadPage() {
         <p style={{ color: '#666', marginTop: 12, fontSize: 14 }}>
           {t('upload.subtitle')}
         </p>
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 16,
+            padding: '8px 12px',
+            borderRadius: 999,
+            border: '1px solid rgba(191,226,58,0.22)',
+            background: 'rgba(191,226,58,0.06)',
+            color: '#b7c88c',
+            fontSize: 12,
+            letterSpacing: 0.3,
+          }}
+        >
+          <span style={{ color: '#bfe23a', fontSize: 13 }}>●</span>
+          {t('upload.desktop_hint')}
+        </div>
       </div>
 
       {/* Upload zone */}
@@ -283,6 +305,8 @@ export default function UploadPage() {
           </div>
         </div>
       )}
+
+      <TutorialSection t={t} />
     </main>
   )
 }

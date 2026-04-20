@@ -1,0 +1,22 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="32" fill="#171717"/>
+  <rect x="0" y="0" width="1200" height="72" fill="#111111"/>
+  <text x="40" y="46" fill="#F5F5F5" font-size="28" font-family="Arial" font-weight="700">BALAK</text>
+  <text x="165" y="46" fill="#7E7E7E" font-size="24" font-family="Arial" letter-spacing="6">GPX EDITOR</text>
+  <text x="412" y="46" fill="#8A8A8A" font-size="24" font-family="Arial">Mallorca 312 OK Mobility 2026</text>
+  <rect x="0" y="72" width="1200" height="516" fill="#A8D0DB"/>
+  <rect x="0" y="72" width="1200" height="516" fill="url(#grid)" opacity="0.55"/>
+  <path d="M92 508C146 470 208 462 260 402C308 347 372 360 429 288C491 210 585 236 651 163C699 109 769 128 841 117" stroke="#3B82F6" stroke-width="12" stroke-linecap="round"/>
+  <path d="M299 511C350 484 404 535 459 482C514 429 593 471 647 432C708 388 760 394 817 354" stroke="#22C55E" stroke-width="12" stroke-linecap="round"/>
+  <path d="M814 354C880 366 903 462 961 480C1028 500 1075 560 1144 528" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="818" cy="355" r="10" fill="#FB7185"/>
+  <rect x="0" y="588" width="407" height="132" fill="#21324E"/>
+  <rect x="407" y="588" width="458" height="132" fill="#173523"/>
+  <rect x="865" y="588" width="335" height="132" fill="#4A3510"/>
+  <path d="M0 698C78 698 85 695 120 672C170 640 204 600 241 612C282 626 303 581 336 598C374 617 399 640 432 660C474 687 524 628 569 618C624 606 649 644 702 668C756 692 802 692 865 692C936 692 962 672 1014 666C1088 658 1095 677 1200 677" stroke="#C7F22B" stroke-width="4" fill="none"/>
+  <defs>
+    <pattern id="grid" width="140" height="140" patternUnits="userSpaceOnUse">
+      <path d="M140 0H0V140" stroke="#2D3A3F" stroke-width="2"/>
+    </pattern>
+  </defs>
+</svg>

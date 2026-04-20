@@ -1,0 +1,34 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="32" fill="#EEEDE6"/>
+  <rect x="54" y="44" width="1092" height="258" rx="22" fill="white" stroke="#E1DFD5" stroke-width="2"/>
+  <text x="92" y="90" fill="#16181B" font-size="26" font-family="Arial" font-weight="800">MALLORCA 312 OK MOBILITY 2026</text>
+  <text x="92" y="124" fill="#5A6577" font-size="18" font-family="Arial">314 km</text>
+  <rect x="92" y="168" width="346" height="92" fill="#DBEAFE"/>
+  <rect x="438" y="168" width="420" height="92" fill="#DCFCE7"/>
+  <rect x="858" y="168" width="196" height="92" fill="#FEF3C7"/>
+  <path d="M92 246C165 246 188 212 240 212C283 212 312 188 360 188C405 188 420 242 470 242C530 242 561 205 607 205C657 205 670 236 720 236C776 236 799 218 855 218C911 218 942 248 1014 248C1032 248 1044 242 1054 242" stroke="#16181B" stroke-width="4" fill="none"/>
+  <rect x="246" y="122" width="86" height="36" rx="10" fill="#3B82F6"/>
+  <rect x="626" y="122" width="96" height="36" rx="10" fill="#22C55E"/>
+  <rect x="956" y="122" width="90" height="36" rx="10" fill="#F59E0B"/>
+  <text x="278" y="145" fill="white" font-size="16" font-family="Arial" font-weight="700">Z2</text>
+  <text x="662" y="145" fill="white" font-size="16" font-family="Arial" font-weight="700">Z4</text>
+  <text x="990" y="145" fill="white" font-size="16" font-family="Arial" font-weight="700">Z1</text>
+  <rect x="54" y="336" width="442" height="338" rx="22" fill="white" stroke="#E1DFD5" stroke-width="2"/>
+  <text x="84" y="380" fill="#16181B" font-size="22" font-family="Arial" font-weight="800">HOJA DE RUTA</text>
+  <rect x="84" y="406" width="382" height="52" fill="#DBEAFE"/>
+  <text x="102" y="440" fill="#16181B" font-size="18" font-family="Arial" font-weight="800">Z2 - 130w</text>
+  <text x="374" y="440" fill="#16181B" font-size="18" font-family="Arial" font-weight="800">0 km</text>
+  <rect x="84" y="470" width="382" height="60" fill="#EEF4FF"/>
+  <text x="102" y="508" fill="#16181B" font-size="18" font-family="Arial" font-weight="700">53</text>
+  <text x="170" y="508" fill="#3F4A5A" font-size="18" font-family="Arial">Puerto</text>
+  <rect x="84" y="542" width="382" height="60" fill="#EEFBF2"/>
+  <text x="102" y="580" fill="#16181B" font-size="18" font-family="Arial" font-weight="700">90</text>
+  <text x="170" y="580" fill="#3F4A5A" font-size="18" font-family="Arial">Avituallamiento</text>
+  <rect x="522" y="336" width="624" height="338" rx="22" fill="#151515"/>
+  <rect x="552" y="368" width="564" height="58" rx="12" fill="#1F1F1F"/>
+  <rect x="552" y="444" width="564" height="58" rx="12" fill="#1F1F1F"/>
+  <rect x="552" y="520" width="564" height="58" rx="12" fill="#1F1F1F"/>
+  <text x="586" y="405" fill="#FFFFFF" font-size="18" font-family="Arial" font-weight="700">Exportar imagen pacing</text>
+  <text x="586" y="481" fill="#FFFFFF" font-size="18" font-family="Arial" font-weight="700">Exportar tira impresión</text>
+  <text x="586" y="557" fill="#FFFFFF" font-size="18" font-family="Arial" font-weight="700">Exportar hoja de ruta</text>
+</svg>
