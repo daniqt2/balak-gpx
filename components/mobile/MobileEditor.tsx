@@ -12,10 +12,11 @@ import PointCard from '@/components/editor/PointCard'
 import PacingPanel from '@/components/editor/PacingPanel'
 import ElevationStrip from '@/components/editor/ElevationStrip'
 import AddByKmModal from '@/components/editor/AddByKmModal'
+import AddByTimeModal from '@/components/editor/AddByTimeModal'
 
 const RouteMap = dynamic(() => import('@/components/map/RouteMap'), { ssr: false })
 
-type Tab = 'puntos' | 'pacing'
+type Tab = 'puntos' | 'pacing' | 'export'
 
 interface MobileEditorProps {
   state: EditorState
@@ -38,19 +39,21 @@ interface MobileEditorProps {
   onExportPacingStrip: () => void
   onExportPacingCue: () => void
   onAddByKm: (km: number, type: PointType, label: string) => void
+  onAddByTime: (speedKmh: number, everyMinutes: number, type: PointType, label: string) => void
 }
 
 export default function MobileEditor({
   state, activeType, pacingZones, ftp, totalKm,
   onUpload, onExport, onSendToGarmin, onMapClick,
   onDelete, onEdit, onTypeChange, onFtpChange,
-  onAddZone, onDeleteZone, onExportPacing, onExportPacingStrip, onExportPacingCue, onAddByKm,
+  onAddZone, onDeleteZone, onExportPacing, onExportPacingStrip, onExportPacingCue, onAddByKm, onAddByTime,
 }: MobileEditorProps) {
   const { t } = useT()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [tab, setTab] = useState<Tab>('puntos')
   const [hoverPoint, setHoverPoint] = useState<{ lat: number; lon: number } | null>(null)
   const [showKmModal, setShowKmModal] = useState(false)
+  const [showTimeModal, setShowTimeModal] = useState(false)
 
   const sorted = [...state.markers].sort((a, b) => a.distanceFromStart - b.distanceFromStart)
   const hasEle = !!state.route?.some(p => p.ele != null)
@@ -138,6 +141,9 @@ export default function MobileEditor({
             <button style={tabStyle(tab === 'pacing')} onClick={() => setTab('pacing')}>
               {t('sidebar.tab_pacing')}
             </button>
+            <button style={tabStyle(tab === 'export')} onClick={() => setTab('export')}>
+              {t('sidebar.tab_export')}
+            </button>
             <button
               onClick={() => setDrawerOpen(false)}
               style={{ background: 'none', border: 'none', color: '#555', fontSize: 18, cursor: 'pointer', padding: '0 14px', flexShrink: 0 }}
@@ -164,16 +170,28 @@ export default function MobileEditor({
                   <PointCard key={m.id} marker={m} onDelete={onDelete} onEdit={onEdit} />
                 ))}
                 {state.routeGeoJSON && (
-                  <button
-                    onClick={() => { setShowKmModal(true); setDrawerOpen(false) }}
-                    style={{
-                      marginTop: 8, width: '100%',
-                      background: 'var(--surface2)', border: '1px solid var(--border)',
-                      color: '#aaa', borderRadius: 4, padding: '9px', fontSize: 12, cursor: 'pointer',
-                    }}
-                  >
-                    {t('sidebar.add_by_km')}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => { setShowKmModal(true); setDrawerOpen(false) }}
+                      style={{
+                        marginTop: 8, width: '100%',
+                        background: 'var(--surface2)', border: '1px solid var(--border)',
+                        color: '#aaa', borderRadius: 4, padding: '9px', fontSize: 12, cursor: 'pointer',
+                      }}
+                    >
+                      {t('sidebar.add_by_km')}
+                    </button>
+                    <button
+                      onClick={() => { setShowTimeModal(true); setDrawerOpen(false) }}
+                      style={{
+                        marginTop: 6, width: '100%',
+                        background: 'var(--surface2)', border: '1px solid var(--border)',
+                        color: '#aaa', borderRadius: 4, padding: '9px', fontSize: 12, cursor: 'pointer',
+                      }}
+                    >
+                      {t('sidebar.add_by_time')}
+                    </button>
+                  </>
                 )}
               </>
             )}
@@ -184,10 +202,60 @@ export default function MobileEditor({
                 : <PacingPanel
                     zones={pacingZones} totalKm={totalKm} ftp={ftp}
                     onFtpChange={onFtpChange} onAdd={onAddZone}
-                    onDelete={onDeleteZone} onExport={onExportPacing}
-                    onExportStrip={onExportPacingStrip}
-                    onExportCue={onExportPacingCue}
+                    onDelete={onDeleteZone}
                   />
+            )}
+
+            {tab === 'export' && (
+              !state.routeGeoJSON
+                ? <p style={{ color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', marginTop: 24 }}>{t('sidebar.no_route')}</p>
+                : <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <button
+                      onClick={onExportPacing}
+                      style={{
+                        background: '#fff',
+                        border: 'none',
+                        color: '#111',
+                        borderRadius: 4,
+                        padding: '10px',
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {t('pacing.export_image')}
+                    </button>
+                    <button
+                      onClick={onExportPacingStrip}
+                      style={{
+                        background: 'var(--surface2)',
+                        border: '1px solid var(--border)',
+                        color: '#fff',
+                        borderRadius: 4,
+                        padding: '10px',
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {t('pacing.export_strip')}
+                    </button>
+                    <button
+                      onClick={onExportPacingCue}
+                      style={{
+                        background: 'var(--surface2)',
+                        border: '1px solid var(--border)',
+                        color: '#fff',
+                        borderRadius: 4,
+                        padding: '10px',
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {t('pacing.export_cue')}
+                    </button>
+                  </div>
             )}
           </div>
         </div>
@@ -210,6 +278,18 @@ export default function MobileEditor({
           activeType={activeType}
           onConfirm={(km, type, label) => { onAddByKm(km, type, label); setShowKmModal(false) }}
           onClose={() => setShowKmModal(false)}
+        />
+      )}
+
+      {showTimeModal && (
+        <AddByTimeModal
+          totalKm={totalKm}
+          activeType={activeType}
+          onConfirm={(speedKmh, everyMinutes, type, label) => {
+            onAddByTime(speedKmh, everyMinutes, type, label)
+            setShowTimeModal(false)
+          }}
+          onClose={() => setShowTimeModal(false)}
         />
       )}
     </div>

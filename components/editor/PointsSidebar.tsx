@@ -16,14 +16,12 @@ interface PointsSidebarProps {
   hasRoute: boolean
   totalKm: number
   onAddByKm: () => void
+  onAddByTime: () => void
   pacingZones: PacingZone[]
   ftp: number
   onFtpChange: (ftp: number) => void
   onAddZone: (zone: PacingZone) => void
   onDeleteZone: (id: string) => void
-  onExportPacing: () => void
-  onExportPacingStrip: () => void
-  onExportPacingCue: () => void
 }
 
 export default function PointsSidebar({
@@ -35,14 +33,12 @@ export default function PointsSidebar({
   hasRoute,
   totalKm,
   onAddByKm,
+  onAddByTime,
   pacingZones,
   ftp,
   onFtpChange,
   onAddZone,
   onDeleteZone,
-  onExportPacing,
-  onExportPacingStrip,
-  onExportPacingCue,
 }: PointsSidebarProps) {
   const { t } = useT()
   const [tab, setTab] = useState<'puntos' | 'pacing'>('puntos')
@@ -142,22 +138,40 @@ export default function PointsSidebar({
               })}
             </div>
             {hasRoute && (
-              <button
-                onClick={onAddByKm}
-                style={{
-                  marginTop: 8,
-                  width: '100%',
-                  background: 'var(--surface2)',
-                  border: '1px solid var(--border)',
-                  color: '#aaa',
-                  borderRadius: 4,
-                  padding: '7px',
-                  fontSize: 11,
-                  cursor: 'pointer',
-                }}
-              >
-                {t('sidebar.add_by_km')}
-              </button>
+              <>
+                <button
+                  onClick={onAddByKm}
+                  style={{
+                    marginTop: 8,
+                    width: '100%',
+                    background: 'var(--surface2)',
+                    border: '1px solid var(--border)',
+                    color: '#aaa',
+                    borderRadius: 4,
+                    padding: '7px',
+                    fontSize: 11,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t('sidebar.add_by_km')}
+                </button>
+                <button
+                  onClick={onAddByTime}
+                  style={{
+                    marginTop: 6,
+                    width: '100%',
+                    background: 'var(--surface2)',
+                    border: '1px solid var(--border)',
+                    color: '#aaa',
+                    borderRadius: 4,
+                    padding: '7px',
+                    fontSize: 11,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t('sidebar.add_by_time')}
+                </button>
+              </>
             )}
           </div>
         </>
@@ -177,9 +191,6 @@ export default function PointsSidebar({
               onFtpChange={onFtpChange}
               onAdd={onAddZone}
               onDelete={onDeleteZone}
-              onExport={onExportPacing}
-              onExportStrip={onExportPacingStrip}
-              onExportCue={onExportPacingCue}
             />
           )}
         </div>

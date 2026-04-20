@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
+import { ensureGpxFileSize, ensureGpxTrackPointLimit } from '@/lib/gpx/uploadGuard'
 import { useT } from '@/lib/i18n'
 
 interface MobileToolbarProps {
@@ -12,13 +13,28 @@ interface MobileToolbarProps {
 
 export default function MobileToolbar({ fileName, onUpload, onExport, onSendToGarmin }: MobileToolbarProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { lang, setLang } = useT()
+  const { lang, setLang, t } = useT()
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    try {
+      ensureGpxFileSize(file, t)
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : t('upload.error_process'))
+      e.target.value = ''
+      return
+    }
     const reader = new FileReader()
-    reader.onload = (ev) => onUpload(ev.target?.result as string, file.name.replace(/\.gpx$/i, ''))
+    reader.onload = (ev) => {
+      try {
+        const text = ev.target?.result as string
+        ensureGpxTrackPointLimit(text, t)
+        onUpload(text, file.name.replace(/\.gpx$/i, ''))
+      } catch (err: unknown) {
+        alert(err instanceof Error ? err.message : t('upload.error_process'))
+      }
+    }
     reader.readAsText(file)
     e.target.value = ''
   }

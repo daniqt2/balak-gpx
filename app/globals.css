@@ -24,6 +24,12 @@ body {
   height: 100%;
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: #5f5f5f;
+  opacity: 1;
+}
+
 #__next,
 main {
   height: 100%;

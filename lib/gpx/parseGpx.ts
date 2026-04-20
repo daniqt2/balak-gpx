@@ -1,4 +1,5 @@
 import { RoutePoint } from '@/types/route'
+import { MAX_GPX_TRACK_POINTS } from '@/lib/gpx/uploadGuard'
 
 export function parseGpx(text: string): RoutePoint[] {
   const parser = new DOMParser()
@@ -9,6 +10,9 @@ export function parseGpx(text: string): RoutePoint[] {
 
   const trkpts = doc.querySelectorAll('trkpt')
   if (trkpts.length === 0) throw new Error('No se encontró ninguna ruta en el archivo GPX')
+  if (trkpts.length > MAX_GPX_TRACK_POINTS) {
+    throw new Error(`El archivo GPX tiene demasiados puntos. Máximo permitido: ${MAX_GPX_TRACK_POINTS.toLocaleString('en-US')}`)
+  }
 
   const points: RoutePoint[] = []
   trkpts.forEach((pt) => {

@@ -3,8 +3,10 @@
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { parseGpx, routeToGeoJSON } from '@/lib/gpx/parseGpx'
+import { ensureGpxFileSize, ensureGpxTrackPointLimit } from '@/lib/gpx/uploadGuard'
 import { useT } from '@/lib/i18n'
 import TutorialSection from '@/components/home/TutorialSection'
+import { useIsMobile } from '@/lib/hooks/useIsMobile'
 
 interface GpxEntry {
   file: string
@@ -14,6 +16,7 @@ interface GpxEntry {
 export default function UploadPage() {
   const router = useRouter()
   const { t, lang, setLang } = useT()
+  const isMobile = useIsMobile()
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -42,10 +45,18 @@ export default function UploadPage() {
       setError(t('upload.error_gpx_only'))
       return
     }
+    try {
+      ensureGpxFileSize(file, t)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : t('upload.error_process'))
+      return
+    }
     const reader = new FileReader()
     reader.onload = (e) => {
       try {
-        storeAndNavigate(e.target?.result as string, file.name.replace(/\.gpx$/i, ''))
+        const text = e.target?.result as string
+        ensureGpxTrackPointLimit(text, t)
+        storeAndNavigate(text, file.name.replace(/\.gpx$/i, ''))
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Error al procesar el archivo')
       }
@@ -60,6 +71,7 @@ export default function UploadPage() {
       const res = await fetch(`/gpx/${entry.file}`)
       if (!res.ok) throw new Error(t('upload.error_load'))
       const text = await res.text()
+      ensureGpxTrackPointLimit(text, t)
       storeAndNavigate(text, entry.name)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t('upload.error_load'))
@@ -131,24 +143,26 @@ export default function UploadPage() {
         <p style={{ color: '#666', marginTop: 12, fontSize: 14 }}>
           {t('upload.subtitle')}
         </p>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            marginTop: 16,
-            padding: '8px 12px',
-            borderRadius: 999,
-            border: '1px solid rgba(191,226,58,0.22)',
-            background: 'rgba(191,226,58,0.06)',
-            color: '#b7c88c',
-            fontSize: 12,
-            letterSpacing: 0.3,
-          }}
-        >
-          <span style={{ color: '#bfe23a', fontSize: 13 }}>●</span>
-          {t('upload.desktop_hint')}
-        </div>
+        {isMobile && (
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              marginTop: 16,
+              padding: '8px 12px',
+              borderRadius: 999,
+              border: '1px solid rgba(191,226,58,0.22)',
+              background: 'rgba(191,226,58,0.06)',
+              color: '#b7c88c',
+              fontSize: 12,
+              letterSpacing: 0.3,
+            }}
+          >
+            <span style={{ color: '#bfe23a', fontSize: 13 }}>●</span>
+            {t('upload.desktop_hint')}
+          </div>
+        )}
       </div>
 
       {/* Upload zone */}

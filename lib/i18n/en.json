@@ -16,6 +16,8 @@
     "drag_sub": "or click to select",
     "desktop_hint": "Recommended on desktop: the full experience works better on a larger screen.",
     "error_gpx_only": "Only .gpx files are supported",
+    "error_too_large": "The GPX file is too large. Recommended maximum: {maxMb} MB.",
+    "error_too_many_points": "The GPX file has too many track points. Maximum allowed: {maxPoints}.",
     "error_load": "Could not load the file",
     "error_process": "Error processing the file",
     "loading": "Loading…",
@@ -43,17 +45,31 @@
   "sidebar": {
     "tab_points": "POINTS",
     "tab_pacing": "PACING",
+    "tab_export": "EXPORT",
     "no_route": "Upload a GPX file to get started",
     "click_hint": "Click on the route to add points",
     "point_type": "POINT TYPE",
-    "add_by_km": "+ Add by km"
+    "add_by_km": "+ Add by km",
+    "add_by_time": "+ Add every X min"
   },
   "pacing": {
     "new_zone": "NEW ZONE",
     "km_start": "START KM",
     "km_end": "END KM",
+    "mode_watts": "WATTS",
+    "mode_hr": "BPM",
+    "hr_by_value": "VALUE",
+    "hr_by_percent": "% HR",
     "watts": "WATTS",
+    "watts_to_optional": "optional max",
+    "hr_value": "BPM",
+    "hr_value_to_optional": "optional max",
+    "hr_percent": "% HR",
+    "hr_percent_to_optional": "optional max",
     "name_optional": "NAME (optional)",
+    "zone_custom": "Custom",
+    "custom_name": "ZONE NAME",
+    "custom_name_placeholder": "e.g. Climb tempo",
     "add_zone": "+ Add zone",
     "export_image": "↓ Export image",
     "export_strip": "↓ Export print strip",
@@ -67,6 +83,16 @@
     "type_label": "TYPE",
     "name_optional": "NAME (optional)",
     "add_button": "Add point"
+  },
+  "modal_time": {
+    "title": "ADD POINTS EVERY X MIN",
+    "speed_label": "Speed (KM/H)",
+    "speed_placeholder": "e.g. 30",
+    "every_label": "EVERY X MINUTES",
+    "every_placeholder": "e.g. 20",
+    "summary": "A point will be added every {interval} km based on the average speed entered. Estimated total: {count}.",
+    "summary_invalid": "Enter a valid speed and interval to generate at least one point within {max} km.",
+    "add_button": "Add points"
   },
   "point": {
     "edit": "Edit",

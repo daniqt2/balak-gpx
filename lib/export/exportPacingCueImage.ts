@@ -1,5 +1,6 @@
-import { PacingZone } from '@/types/pacing'
+import { PacingZone, formatPacingTarget } from '@/types/pacing'
 import { RouteMarker, POINT_CONFIG } from '@/types/points'
+import type { Lang } from '@/lib/i18n'
 
 const WIDTH = 240
 const SCALE = 3
@@ -46,7 +47,8 @@ export async function exportPacingCueImage(
   fileName: string,
   totalKm: number,
   pacingZones: PacingZone[],
-  markers: RouteMarker[]
+  markers: RouteMarker[],
+  lang: Lang
 ): Promise<void> {
   const sortedMarkers = [...markers].sort((a, b) => a.distanceFromStart - b.distanceFromStart)
   const entries: CueEntry[] = [
@@ -157,7 +159,7 @@ export async function exportPacingCueImage(
         ctx.fillStyle = '#111111'
         ctx.font = 'bold 8px Arial, sans-serif'
         ctx.fillText(
-          `${entry.zone.label} - ${entry.zone.watts}w`,
+          `${entry.zone.label} - ${formatPacingTarget(entry.zone.value, entry.zone.unit, lang)}`,
           kmColX,
           y + 1
         )

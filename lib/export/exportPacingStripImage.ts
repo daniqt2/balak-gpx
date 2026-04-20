@@ -1,7 +1,8 @@
-import { PacingZone } from '@/types/pacing'
+import { PacingZone, formatPacingTarget } from '@/types/pacing'
 import { RoutePoint } from '@/types/route'
 import { RouteMarker, POINT_CONFIG } from '@/types/points'
 import { buildRouteProfile } from '@/lib/geo/routeProfile'
+import type { Lang } from '@/lib/i18n'
 
 const PAD_X = 72
 const SCALE = 2
@@ -51,7 +52,8 @@ export async function exportPacingStripImage(
   totalKm: number,
   pacingZones: PacingZone[],
   markers: RouteMarker[],
-  fileName: string
+  fileName: string,
+  lang: Lang
 ): Promise<void> {
   const profile = buildRouteProfile(route).filter((point) => point.ele != null)
   if (profile.length < 2) return
@@ -119,7 +121,7 @@ export async function exportPacingStripImage(
     ctx.textAlign = 'center'
     ctx.fillText(zone.label, tagX, 126)
     ctx.font = '14px Arial, sans-serif'
-    ctx.fillText(`${zone.watts}w`, tagX, 143)
+    ctx.fillText(formatPacingTarget(zone.value, zone.unit, lang), tagX, 143)
     ctx.textAlign = 'left'
   })
 

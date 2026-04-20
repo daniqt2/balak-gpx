@@ -19,8 +19,10 @@ import Toolbar from '@/components/editor/Toolbar'
 import PointsSidebar from '@/components/editor/PointsSidebar'
 import ElevationStrip from '@/components/editor/ElevationStrip'
 import AddByKmModal from '@/components/editor/AddByKmModal'
+import AddByTimeModal from '@/components/editor/AddByTimeModal'
 import MobileEditor from '@/components/mobile/MobileEditor'
 import { useIsMobile } from '@/lib/hooks/useIsMobile'
+import { useT } from '@/lib/i18n'
 
 const RouteMap = dynamic(() => import('@/components/map/RouteMap'), { ssr: false })
 
@@ -35,9 +37,11 @@ const DEFAULT_STATE: EditorState = {
 export default function EditorPage() {
   const router = useRouter()
   const isMobile = useIsMobile()
+  const { lang } = useT()
   const [state, setState] = useState<EditorState>(DEFAULT_STATE)
   const [activeType, setActiveType] = useState<PointType>('puerto')
   const [showKmModal, setShowKmModal] = useState(false)
+  const [showTimeModal, setShowTimeModal] = useState(false)
   const [hoverPoint, setHoverPoint] = useState<{ lat: number; lon: number } | null>(null)
   const [pacingZones, setPacingZones] = useState<PacingZone[]>([])
   const [ftp, setFtp] = useState(0)
@@ -107,6 +111,33 @@ export default function EditorPage() {
     [state.routeGeoJSON]
   )
 
+  const handleAddByTime = useCallback(
+    (speedKmh: number, everyMinutes: number, type: PointType, label: string) => {
+      if (!state.routeGeoJSON) return
+      const routeTotalKm = totalRouteDistance(state.routeGeoJSON)
+      const intervalKm = (speedKmh * everyMinutes) / 60
+      if (!(intervalKm > 0)) return
+
+      const markers: RouteMarker[] = []
+      for (let km = intervalKm; km <= routeTotalKm + 1e-6; km += intervalKm) {
+        const [lng, lat] = pointAtKm(state.routeGeoJSON, km)
+        markers.push({
+          id: generateId(),
+          type,
+          label,
+          lat,
+          lon: lng,
+          distanceFromStart: Number(km.toFixed(3)),
+        })
+      }
+
+      if (markers.length === 0) return
+      setState((prev) => ({ ...prev, markers: [...prev.markers, ...markers] }))
+      setShowTimeModal(false)
+    },
+    [state.routeGeoJSON]
+  )
+
   const totalKm = state.routeGeoJSON ? totalRouteDistance(state.routeGeoJSON) : 0
   const totalGain = state.route
     ? totalElevationGain(state.route.map((p) => p.ele))
@@ -114,18 +145,18 @@ export default function EditorPage() {
 
   const handleExport = useCallback(() => {
     if (!state.route || !state.routeGeoJSON || !state.fileName) return
-    const gpxStr = exportGpx(state.route, state.routeGeoJSON, state.markers, pacingZones, state.fileName)
+    const gpxStr = exportGpx(state.route, state.routeGeoJSON, state.markers, pacingZones, state.fileName, lang)
     const exportName = state.fileRenamed ? state.fileName : `${state.fileName}-editado`
     downloadFile(gpxStr, `${exportName}.gpx`, 'application/gpx+xml')
-  }, [state, pacingZones])
+  }, [state, pacingZones, lang])
 
   const handleSendToGarmin = useCallback(() => {
     if (!state.route || !state.routeGeoJSON || !state.fileName) return
-    const gpxStr = exportGpx(state.route, state.routeGeoJSON, state.markers, pacingZones, state.fileName)
+    const gpxStr = exportGpx(state.route, state.routeGeoJSON, state.markers, pacingZones, state.fileName, lang)
     const exportName = state.fileRenamed ? state.fileName : `${state.fileName}-editado`
     downloadFile(gpxStr, `${exportName}.gpx`, 'application/gpx+xml')
-    window.open('https://connect.garmin.com/app/courses', '_blank')
-  }, [state, pacingZones])
+    window.open('https://connect.garmin.com/app/courses', '_blank', 'noopener,noreferrer')
+  }, [state, pacingZones, lang])
 
   const handleExportPacing = useCallback(async () => {
     if (!state.routeGeoJSON || !state.route) return
@@ -135,9 +166,10 @@ export default function EditorPage() {
       state.route,
       totalKm,
       ftp,
-      state.fileName ?? 'ruta'
+      state.fileName ?? 'ruta',
+      lang
     )
-  }, [state.routeGeoJSON, state.route, pacingZones, totalKm, ftp, state.fileName])
+  }, [state.routeGeoJSON, state.route, pacingZones, totalKm, ftp, state.fileName, lang])
 
   const handleExportPacingStrip = useCallback(async () => {
     if (!state.route || !state.route.some((point) => point.ele != null)) return
@@ -146,18 +178,20 @@ export default function EditorPage() {
       totalKm,
       pacingZones,
       state.markers,
-      state.fileName ?? 'ruta'
+      state.fileName ?? 'ruta',
+      lang
     )
-  }, [state.route, state.markers, totalKm, pacingZones, state.fileName])
+  }, [state.route, state.markers, totalKm, pacingZones, state.fileName, lang])
 
   const handleExportPacingCue = useCallback(async () => {
     await exportPacingCueImage(
       state.fileName ?? 'ruta',
       totalKm,
       pacingZones,
-      state.markers
+      state.markers,
+      lang
     )
-  }, [state.fileName, totalKm, pacingZones, state.markers])
+  }, [state.fileName, totalKm, pacingZones, state.markers, lang])
 
   if (isMobile) {
     return (
@@ -182,6 +216,7 @@ export default function EditorPage() {
         onExportPacingStrip={handleExportPacingStrip}
         onExportPacingCue={handleExportPacingCue}
         onAddByKm={handleAddByKm}
+        onAddByTime={handleAddByTime}
       />
     )
   }
@@ -227,14 +262,12 @@ export default function EditorPage() {
           hasRoute={!!state.routeGeoJSON}
           totalKm={totalKm}
           onAddByKm={() => setShowKmModal(true)}
+          onAddByTime={() => setShowTimeModal(true)}
           pacingZones={pacingZones}
           ftp={ftp}
           onFtpChange={setFtp}
           onAddZone={(z) => setPacingZones((prev) => [...prev, z])}
           onDeleteZone={(id) => setPacingZones((prev) => prev.filter((z) => z.id !== id))}
-          onExportPacing={handleExportPacing}
-          onExportPacingStrip={handleExportPacingStrip}
-          onExportPacingCue={handleExportPacingCue}
         />
       </div>
 
@@ -254,6 +287,15 @@ export default function EditorPage() {
           activeType={activeType}
           onConfirm={handleAddByKm}
           onClose={() => setShowKmModal(false)}
+        />
+      )}
+
+      {showTimeModal && (
+        <AddByTimeModal
+          totalKm={totalKm}
+          activeType={activeType}
+          onConfirm={handleAddByTime}
+          onClose={() => setShowTimeModal(false)}
         />
       )}
     </div>

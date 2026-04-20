@@ -1,8 +1,9 @@
 import { RoutePoint } from '@/types/route'
 import { RouteMarker, POINT_CONFIG } from '@/types/points'
-import { PacingZone } from '@/types/pacing'
+import { PacingZone, formatPacingTarget } from '@/types/pacing'
 import type { Feature, LineString } from 'geojson'
 import { pointAtKm } from '@/lib/geo/pointAtKm'
+import type { Lang } from '@/lib/i18n'
 
 const PACING_DUPLICATE_KM_THRESHOLD = 0.15
 
@@ -29,7 +30,8 @@ export function exportGpx(
   routeGeoJSON: Feature<LineString>,
   markers: RouteMarker[],
   pacingZones: PacingZone[],
-  fileName: string
+  fileName: string,
+  lang: Lang
 ): string {
   const trkpts = route
     .map((p) => {
@@ -45,7 +47,7 @@ export function exportGpx(
       return {
         lat,
         lon,
-        label: `${zone.label} - ${zone.watts}w`,
+        label: `${zone.label} - ${formatPacingTarget(zone.value, zone.unit, lang)}`,
         sym: 'Flag, Green',
         type: 'pacing_start',
         desc: `Pacing start · km ${zone.kmStart.toFixed(1)}`,

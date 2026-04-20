@@ -16,6 +16,8 @@
     "drag_sub": "o haz clic para seleccionar",
     "desktop_hint": "Recomendado en ordenador: la experiencia completa se aprovecha mejor en pantalla grande.",
     "error_gpx_only": "Solo se admiten archivos .gpx",
+    "error_too_large": "El archivo GPX es demasiado grande. Máximo recomendado: {maxMb} MB.",
+    "error_too_many_points": "El archivo GPX tiene demasiados puntos. Máximo permitido: {maxPoints}.",
     "error_load": "No se pudo cargar el archivo",
     "error_process": "Error al procesar el archivo",
     "loading": "Cargando…",
@@ -43,17 +45,31 @@
   "sidebar": {
     "tab_points": "PUNTOS",
     "tab_pacing": "PACING",
+    "tab_export": "EXPORT",
     "no_route": "Sube un archivo GPX para empezar",
     "click_hint": "Haz clic en la ruta para añadir puntos",
     "point_type": "TIPO DE PUNTO",
-    "add_by_km": "+ Añadir por km"
+    "add_by_km": "+ Añadir por km",
+    "add_by_time": "+ Añadir cada X min"
   },
   "pacing": {
     "new_zone": "NUEVA ZONA",
     "km_start": "KM INICIO",
     "km_end": "KM FIN",
+    "mode_watts": "VATIOS",
+    "mode_hr": "FC",
+    "hr_by_value": "PPM",
+    "hr_by_percent": "% FC",
     "watts": "VATIOS",
+    "watts_to_optional": "máx. opcional",
+    "hr_value": "PPM",
+    "hr_value_to_optional": "máx. opcional",
+    "hr_percent": "% FC",
+    "hr_percent_to_optional": "máx. opcional",
     "name_optional": "NOMBRE (opcional)",
+    "zone_custom": "Personalizada",
+    "custom_name": "NOMBRE ZONA",
+    "custom_name_placeholder": "ej. Tempo subida",
     "add_zone": "+ Añadir zona",
     "export_image": "↓ Exportar imagen",
     "export_strip": "↓ Exportar tira impresión",
@@ -67,6 +83,16 @@
     "type_label": "TIPO",
     "name_optional": "NOMBRE (opcional)",
     "add_button": "Añadir punto"
+  },
+  "modal_time": {
+    "title": "AÑADIR PUNTOS CADA X MIN",
+    "speed_label": "Velocidad (KM/H)",
+    "speed_placeholder": "ej. 30",
+    "every_label": "CADA X MINUTOS",
+    "every_placeholder": "ej. 20",
+    "summary": "Se añadirá un punto cada {interval} km según la velocidad media indicada. Total estimado: {count}.",
+    "summary_invalid": "Introduce una velocidad y un intervalo válidos para generar al menos un punto dentro de {max} km.",
+    "add_button": "Añadir puntos"
   },
   "point": {
     "edit": "Editar",

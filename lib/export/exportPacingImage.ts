@@ -1,8 +1,9 @@
 import type { Feature, LineString } from 'geojson'
-import { PacingZone } from '@/types/pacing'
+import { PacingZone, formatPacingTarget, parseSingleTargetValue } from '@/types/pacing'
 import { RoutePoint } from '@/types/route'
 import { sliceRouteByKm } from '@/lib/geo/sliceRoute'
 import { buildRouteProfile } from '@/lib/geo/routeProfile'
+import type { Lang } from '@/lib/i18n'
 
 const W = 1400
 const MAP_H = 560
@@ -49,7 +50,8 @@ export async function exportPacingImage(
   route: RoutePoint[],
   totalKm: number,
   ftp: number,
-  fileName: string
+  fileName: string,
+  lang: Lang
 ): Promise<void> {
   const canvas = document.createElement('canvas')
   canvas.width = W
@@ -230,10 +232,11 @@ export async function exportPacingImage(
     ctx.font = 'bold 13px Arial, sans-serif'; ctx.fillStyle = '#fff'
     ctx.fillText(zone.label, lx + 12, ly + 14)
     ctx.font = 'bold 16px Arial, sans-serif'; ctx.fillStyle = zone.color
-    ctx.fillText(`${zone.watts}w`, lx + 12, ly + 32)
-    if (ftp > 0) {
+    ctx.fillText(formatPacingTarget(zone.value, zone.unit, lang), lx + 12, ly + 32)
+    const zoneWatts = zone.unit === 'w' ? parseSingleTargetValue(zone.value) : null
+    if (ftp > 0 && zoneWatts != null) {
       ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#666'
-      ctx.fillText(`${Math.round((zone.watts / ftp) * 100)}% FTP`, lx + 12 + 52, ly + 32)
+      ctx.fillText(`${Math.round((zoneWatts / ftp) * 100)}% FTP`, lx + 12 + 52, ly + 32)
     }
     ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#555'
     ctx.fillText(`km ${zone.kmStart}–${zone.kmEnd}`, lx + 12, ly + 48)
